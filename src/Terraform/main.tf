@@ -1,4 +1,4 @@
-module "network" {
+module "boda-network" {
   source = "./modules/network"
   
   vpc_cidr = var.vpc_cidr
@@ -10,7 +10,7 @@ module "network" {
   instance_type = var.instance_type
 }
 
-module "front" {
+module "boda-front" {
   source = "./modules/frontend"
   
   vpc_id = module.network.vpc_id
@@ -24,7 +24,7 @@ module "front" {
   instance_names = var.instance_names
 }
 
-module "back" {
+module "boda-back" {
   source = "./modules/backend"
   
   vpc_id = module.network.vpc_id
@@ -36,7 +36,7 @@ module "back" {
   ssh_keys = var.ssh_keys
 }
 
-module "db" {
+module "boda-db" {
   source = "./modules/database"
   
   vpc_id = module.network.vpc_id
@@ -48,7 +48,7 @@ module "db" {
   ssh_keys = var.ssh_keys
 }
 
-module "ai" {
+module "boda-ai" {
   source = "./modules/ai"
   
   vpc_id = module.network.vpc_id
