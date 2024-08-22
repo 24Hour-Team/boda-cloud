@@ -1,0 +1,13 @@
+- hosts: database
+  become: yes
+  tasks:
+  - name: Install MySQL
+    dnf:
+      name: mysql
+      state: present
+
+  - name: Start MySQL
+    service:
+      name: mysql
+      state: started
+      enabled: true
