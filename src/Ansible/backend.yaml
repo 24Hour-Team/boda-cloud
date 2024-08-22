@@ -1,0 +1,20 @@
+- hosts: backend
+  become: yes
+  tasks:
+  - name: Install Git
+    dnf:
+      name:
+        - git
+        - java-17-openjdk
+      state: present
+
+  - name: Clone backend repo
+    git:
+      repo: 'https://github.com/24Hour-Team/boda-server.git'
+      dest: '/home/ec2-user/boda-server'
+      version: develop
+
+  - name: Change gradlew permission and build application
+    shell: chmod +x gradlew && ./gradlew clean build
+    args:
+      chdir: /home/ec2-user/boda-server

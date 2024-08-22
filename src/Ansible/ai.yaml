@@ -1,0 +1,14 @@
+- hosts: ai
+  become: yes
+  tasks:
+  - name: Install Git
+    dnf:
+      name: git
+      state: present
+
+  - name: Clone ai repo
+    git:
+      # AI 모델 repo 생기면 교체
+      repo: 'https://github.com/24Hour-Team/boda-server.git'
+      dest: '/home/ec2-user/boda-ai'
+      version: develop
