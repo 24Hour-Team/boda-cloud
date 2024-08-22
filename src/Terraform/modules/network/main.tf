@@ -7,7 +7,7 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
   
   tags = {
-    Name = "Main VPC"
+    Name = "Project BODA VPC"
   }
 }
 
@@ -18,7 +18,7 @@ resource "aws_subnet" "public" {
   availability_zone = data.aws_availability_zones.selected.names[0]
   
   tags = {
-    Name = count.index == 0 ? "Frontend subnet" : "Nat subnet"
+    Name = count.index == 0 ? "Frontend-BODA subnet" : "NAT-BODA subnet"
   }
 }
 
@@ -29,7 +29,7 @@ resource "aws_subnet" "private" {
   availability_zone = data.aws_availability_zones.selected.names[1]
   
   tags = {
-    Name = "${var.instance_names[count.index + 1]} Subnet"
+    Name = "${var.instance_names[count.index + 1]}-BODA subnet"
   }
 }
 
@@ -37,7 +37,7 @@ resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "Main IGW"
+    Name = "Project BODA internet gateway"
   }
 }
 
@@ -46,7 +46,7 @@ resource "aws_nat_gateway" "main" {
   subnet_id = aws_subnet.public[1].id
 
   tags = {
-    Name = "Backend NGW"
+    Name = "Project BODA nat gateway"
   }
 
   depends_on = [ aws_internet_gateway.main ]
@@ -61,7 +61,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "Public route table"
+    Name = "Project BODA public route table"
   }
 }
 
@@ -74,7 +74,7 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "Nat route table"
+    Name = "Project BODA private route table"
   }
 }
 
@@ -102,9 +102,17 @@ resource "aws_security_group" "main" {
   }
 
   ingress {
-    description = "localhost"
-    from_port = 8080
-    to_port = 8080
+    description = "react localhost"
+    from_port = 3000
+    to_port = 3000
+    protocol = "tcp"
+    cidr_blocks = [local.anywhere]
+  }
+
+  ingress {
+    description = "HTTP"
+    from_port = 80
+    to_port = 80
     protocol = "tcp"
     cidr_blocks = [local.anywhere]
   }
@@ -125,6 +133,6 @@ resource "aws_security_group" "main" {
   }
 
   tags = {
-    Name = "Main security group"
+    Name = "Project BODA security group"
   }
 }
