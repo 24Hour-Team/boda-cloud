@@ -13,9 +13,9 @@ module "boda-network" {
 module "boda-front" {
   source = "./modules/frontend"
   
-  vpc_id = module.network.vpc_id
-  public_subnet_ids = module.network.public_subnet_ids
-  security_group_id = module.network.security_group_id
+  vpc_id = module.boda-network.vpc_id
+  public_subnet_ids = module.boda-network.public_subnet_ids
+  security_group_id = module.boda-network.security_group_id
   instance_type = var.instance_type
   ami_ids = var.ami_ids
   ssh_keys = var.ssh_keys
@@ -27,9 +27,9 @@ module "boda-front" {
 module "boda-back" {
   source = "./modules/backend"
   
-  vpc_id = module.network.vpc_id
-  private_subnet_ids = module.network.private_subnet_ids
-  security_group_id = module.network.security_group_id
+  vpc_id = module.boda-network.vpc_id
+  private_subnet_ids = module.boda-network.private_subnet_ids
+  security_group_id = module.boda-network.security_group_id
   instance_type = var.instance_type
   instance_indexes = var.instance_indexes
   ami_ids = var.ami_ids
@@ -39,9 +39,9 @@ module "boda-back" {
 module "boda-db" {
   source = "./modules/database"
   
-  vpc_id = module.network.vpc_id
-  private_subnet_ids = module.network.private_subnet_ids
-  security_group_id = module.network.security_group_id
+  vpc_id = module.boda-network.vpc_id
+  private_subnet_ids = module.boda-network.private_subnet_ids
+  security_group_id = module.boda-network.security_group_id
   instance_type = var.instance_type
   instance_indexes = var.instance_indexes
   ami_ids = var.ami_ids
@@ -51,9 +51,9 @@ module "boda-db" {
 module "boda-ai" {
   source = "./modules/ai"
   
-  vpc_id = module.network.vpc_id
-  private_subnet_ids = module.network.private_subnet_ids
-  security_group_id = module.network.security_group_id
+  vpc_id = module.boda-network.vpc_id
+  private_subnet_ids = module.boda-network.private_subnet_ids
+  security_group_id = module.boda-network.security_group_id
   instance_type = var.instance_type
   instance_indexes = var.instance_indexes
   ami_ids = var.ami_ids
