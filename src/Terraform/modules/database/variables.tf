@@ -1,34 +1,54 @@
-variable "vpc_id" {
-  description = "ID of the VPC"
+variable identifier {
+  description = "RDS instance name"
   type        = string
 }
 
-variable "private_subnet_ids" {
-  description = "IDs of the public subnets"
-  type        = list(string)
+variable "engine" {
+  description = "Database engine"
+  type        = string
+}
+
+variable "engine_version" {
+  description = "Database engine version"
+  type        = string
+}
+
+variable "instance_class" {
+  description = "Database instance type"
+  type        = string
+}
+
+variable "allocated_storage" {
+  description = "Database allocated storage"
+  type        = number
+}
+
+variable "storage_type" {
+  description = "Database storage type"
+  type        = string
+}
+
+variable "db_name" {
+  description = "Database name"
+  type        = string
+}
+
+variable "db_username" {
+  description = "Database username"
+  type        = string
+}
+
+variable "db_password" {
+  description = "Database password"
+  type        = string
+}
+
+variable "database_subnet_group_name" {
+  description = "Name of the database subnet group"
+  type        = string
 }
 
 variable "security_group_id" {
   description = "ID of the security group"
   type       = string
-}
-
-variable "instance_type" {
-  description = "EC2 instance type"
-  type        = string
-}
-
-variable "instance_indexes" {
-  description = "EC2 instance index"
-  type        = map(number)
-}
-
-variable "ami_ids" {
-  description = "EC2 AMI ID"
-  type        = map(string)
-}
-
-variable "ssh_keys" {
-  description = "EC2 SSH access key name"
-  type        = map(string)
 }

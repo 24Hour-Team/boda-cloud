@@ -7,18 +7,18 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
   
   tags = {
-    Name = "Project BODA VPC"
+    Name = "BODA VPC"
   }
 }
 
 resource "aws_subnet" "public" {
-  count             = 2
+  count             = length(var.public_subnet_cidrs)
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.public_subnet_cidrs[count.index]
   availability_zone = data.aws_availability_zones.selected.names[0]
   
   tags = {
-    Name = count.index == 0 ? "Frontend-BODA subnet" : "NAT-BODA subnet"
+    Name = count.index == 0 ? "Frontend BODA subnet" : "NAT BODA subnet"
   }
 }
 
@@ -26,18 +26,37 @@ resource "aws_subnet" "private" {
   count             = length(var.private_subnet_cidrs) - 1
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.private_subnet_cidrs[count.index + 1]
-  availability_zone = data.aws_availability_zones.selected.names[1]
+  availability_zone = data.aws_availability_zones.selected.names[0]
   
   tags = {
-    Name = "${var.instance_names[count.index + 1]}-BODA subnet"
+    Name = "${var.instance_names[count.index + 1]} BODA subnet"
   }
+}
+
+resource "aws_subnet" "db" {
+  count             = length(var.db_subnet_cidrs)
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.db_subnet_cidrs[count.index]
+  availability_zone = data.aws_availability_zones.selected.names[count.index]
+  
+  tags = {
+    Name = "${data.aws_availability_zones.selected.names[count.index]} DB BODA subnet"
+  }
+}
+
+resource "aws_db_subnet_group" "db" {
+    subnet_ids = aws_subnet.db[*].id
+
+    tags = {
+        Name = "BODA MySQL RDS subnet group"
+    }
 }
 
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "Project BODA internet gateway"
+    Name = "BODA internet gateway"
   }
 }
 
@@ -46,7 +65,7 @@ resource "aws_nat_gateway" "main" {
   subnet_id = aws_subnet.public[1].id
 
   tags = {
-    Name = "Project BODA nat gateway"
+    Name = "BODA nat gateway"
   }
 
   depends_on = [ aws_internet_gateway.main ]
@@ -61,7 +80,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "Project BODA public route table"
+    Name = "BODA public route table"
   }
 }
 
@@ -74,7 +93,7 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "Project BODA private route table"
+    Name = "BODA private route table"
   }
 }
 
@@ -102,11 +121,19 @@ resource "aws_security_group" "main" {
   }
 
   ingress {
-    description = "react localhost"
+    description = "react app localhost"
     from_port = 3000
     to_port = 3000
     protocol = "tcp"
     cidr_blocks = [local.anywhere]
+  }
+
+  ingress {
+    description = "MySQL RDS"
+    from_port = 3306
+    to_port = 3306
+    protocol = "tcp"
+    cidr_blocks = [var.vpc_cidr]
   }
 
   ingress {
@@ -133,6 +160,6 @@ resource "aws_security_group" "main" {
   }
 
   tags = {
-    Name = "Project BODA security group"
+    Name = "BODA security group"
   }
 }

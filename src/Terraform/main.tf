@@ -4,6 +4,7 @@ module "boda-network" {
   vpc_cidr = var.vpc_cidr
   public_subnet_cidrs = var.public_subnet_cidrs
   private_subnet_cidrs = var.private_subnet_cidrs
+  db_subnet_cidrs = var.db_subnet_cidrs
   elastic_ips = var.elastic_ips
   instance_indexes = var.instance_indexes
   instance_names = var.instance_names
@@ -16,6 +17,7 @@ module "boda-front" {
   vpc_id = module.boda-network.vpc_id
   public_subnet_ids = module.boda-network.public_subnet_ids
   security_group_id = module.boda-network.security_group_id
+
   instance_type = var.instance_type
   ami_ids = var.ami_ids
   ssh_keys = var.ssh_keys
@@ -30,18 +32,7 @@ module "boda-back" {
   vpc_id = module.boda-network.vpc_id
   private_subnet_ids = module.boda-network.private_subnet_ids
   security_group_id = module.boda-network.security_group_id
-  instance_type = var.instance_type
-  instance_indexes = var.instance_indexes
-  ami_ids = var.ami_ids
-  ssh_keys = var.ssh_keys
-}
 
-module "boda-db" {
-  source = "./modules/database"
-  
-  vpc_id = module.boda-network.vpc_id
-  private_subnet_ids = module.boda-network.private_subnet_ids
-  security_group_id = module.boda-network.security_group_id
   instance_type = var.instance_type
   instance_indexes = var.instance_indexes
   ami_ids = var.ami_ids
@@ -58,4 +49,21 @@ module "boda-ai" {
   instance_indexes = var.instance_indexes
   ami_ids = var.ami_ids
   ssh_keys = var.ssh_keys
+}
+
+module "boda-db" {
+  source = "./modules/database"
+  
+  security_group_id = module.boda-network.security_group_id
+  database_subnet_group_name = module.boda-network.database_subnet_group_name
+
+  identifier = var.identifier
+  engine = var.engine
+  engine_version = var.engine_version
+  instance_class = var.instance_class
+  allocated_storage = var.allocated_storage
+  storage_type = var.storage_type
+  db_name = var.db_name
+  db_username = var.db_username
+  db_password = var.db_password
 }
