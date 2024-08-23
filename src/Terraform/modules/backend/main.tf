@@ -6,6 +6,6 @@ resource "aws_instance" "backend" {
   vpc_security_group_ids = [var.security_group_id]
   
   tags = {
-    Name = "Backend"
+    Name = "BODA Backend"
   }
 }

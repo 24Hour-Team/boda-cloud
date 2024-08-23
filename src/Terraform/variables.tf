@@ -13,11 +13,17 @@ variable "private_subnet_cidrs" {
   type        = list(string)
 }
 
+variable "db_subnet_cidrs" {
+  description = "CIDR blocks for the database subnets"
+  type        = list(string)
+}
+
 variable "elastic_ips" {
   description = "Elastic IPs for public subnets"
   type        = map(string)
 }
 
+// 인스턴스 변수
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
@@ -41,4 +47,50 @@ variable "ami_ids" {
 variable "ssh_keys" {
   description = "EC2 SSH access key name"
   type        = map(string)
+}
+
+// 데이터베이스 변수s
+variable identifier {
+  description = "RDS instance name"
+  type        = string
+}
+
+variable "engine" {
+  description = "Database engine"
+  type        = string
+}
+
+variable "engine_version" {
+  description = "Database engine version"
+  type        = string
+}
+
+variable "instance_class" {
+  description = "Database instance type"
+  type        = string
+}
+
+variable "allocated_storage" {
+  description = "Database allocated storage"
+  type        = number
+}
+
+variable "storage_type" {
+  description = "Database storage type"
+  type        = string
+}
+
+variable "db_name" {
+  description = "Database name"
+  type        = string
+}
+
+variable "db_username" {
+  description = "Database username"
+  type        = string
+}
+
+variable "db_password" {
+  description = "Database password"
+  type        = string
 }

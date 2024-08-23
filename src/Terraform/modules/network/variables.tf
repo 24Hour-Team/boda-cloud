@@ -13,6 +13,11 @@ variable "private_subnet_cidrs" {
   type        = list(string)
 }
 
+variable "db_subnet_cidrs" {
+  description = "CIDR blocks for the database subnets"
+  type        = list(string)
+}
+
 variable "elastic_ips" {
   description = "Elastic IPs for public subnets"
   type        = map(string)
