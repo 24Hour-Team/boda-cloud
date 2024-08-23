@@ -1,14 +1,35 @@
 - hosts: ai
   become: yes
   tasks:
-  - name: Install Git
+  - name: Install dependencies
     dnf:
-      name: git
+      name:
+        - git
+        - python3
       state: present
 
-  - name: Clone ai repo
-    git:
-      # AI 모델 repo 생기면 교체
-      repo: 'https://github.com/24Hour-Team/boda-server.git'
-      dest: '/home/ec2-user/boda-ai'
-      version: develop
+  #- name: Clone ai repo
+  #  git:
+  #    # AI 모델 repo 생기면 교체
+  #    repo: 'https://github.com/24Hour-Team/boda-ai.git'
+  #    dest: '/home/ec2-user/boda-ai'
+  #    version: develop
+
+  - name: Install python dependencies
+    shell: pip install pyyaml --upgrade pip && python parse_requirements.py requirements.yaml | xargs pip install
+
+  - name: Synchronize S3 folder to EC2
+    aws_s3:
+      bucket: "ktb-boda-s3"
+      object: "boda-ai"
+      dest: /home/ec2-user/
+      mode: get
+      region: "ap-northeast-2"
+      recursive: yes
+
+  - name: Run BODA
+    shell: python3 /home/ec2-user/boda-ai/main.py
+    args:
+      chdir: /home/ec2-user/boda-ai
+    async: 120
+    poll: 0

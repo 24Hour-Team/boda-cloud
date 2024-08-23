@@ -15,7 +15,7 @@
 
   - name: Copy PlayBooks
     synchronize:
-      src: ~/KTB Project/TravelAI/boda-cloud/src/Ansible
+      src: ~/dev/TravelAI/boda-cloud/src/Ansible
       dest: /home/ec2-user/.Ansible/
       delete: yes
       archive: yes

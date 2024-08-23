@@ -1,3 +1,11 @@
+module "boda-iam-role" {
+  source                = "./modules/IAM"
+
+  role_name             = var.role_name
+  iam_instance_profile_name = var.iam_instance_profile_name
+  s3_bucket_arns        = var.s3_bucket_arns
+}
+
 module "boda-network" {
   source = "./modules/network"
   
@@ -42,9 +50,12 @@ module "boda-back" {
 module "boda-ai" {
   source = "./modules/ai"
   
+  iam_instance_profile_name = var.iam_instance_profile_name
+  
   vpc_id = module.boda-network.vpc_id
   private_subnet_ids = module.boda-network.private_subnet_ids
   security_group_id = module.boda-network.security_group_id
+  
   instance_type = var.instance_type
   instance_indexes = var.instance_indexes
   ami_ids = var.ami_ids
