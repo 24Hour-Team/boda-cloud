@@ -46,4 +46,4 @@ requirements:
   - name : widgetsnbextension
     version : 4.0.11
   - name : flask
-    version : 3.0.32
+    version : 3.0.3

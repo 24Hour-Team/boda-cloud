@@ -66,7 +66,7 @@ variable "ssh_keys" {
   type        = map(string)
 }
 
-// 데이터베이스 변수s
+// 데이터베이스 변수
 variable identifier {
   description = "RDS instance name"
   type        = string

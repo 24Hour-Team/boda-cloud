@@ -25,10 +25,14 @@ resource "aws_iam_role_policy" "boda_s3_access" {
       {
         Action = [
           "s3:GetObject",
-          "s3:ListBucket"
+          "s3:ListBucket",
+          "s3:HeadBucket"
         ]
         Effect = "Allow"
-        Resource = var.s3_bucket_arns
+        Resource = [
+          var.s3_bucket_arns,
+          "${var.s3_bucket_arns}/*"
+        ]
       }
     ]
   })
