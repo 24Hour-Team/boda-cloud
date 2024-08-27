@@ -48,7 +48,7 @@ variable "database_subnet_group_name" {
   type        = string
 }
 
-variable "security_group_id" {
-  description = "ID of the security group"
+variable "private_security_group_id" {
+  description = "ID of the private security group"
   type       = string
 }

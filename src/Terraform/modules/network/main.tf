@@ -109,7 +109,7 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.private.id
 }
 
-resource "aws_security_group" "main" {
+resource "aws_security_group" "public" {
   vpc_id = aws_vpc.main.id
 
   ingress {
@@ -124,22 +124,6 @@ resource "aws_security_group" "main" {
     description = "react app localhost"
     from_port = 3000
     to_port = 3000
-    protocol = "tcp"
-    cidr_blocks = [local.anywhere]
-  }
-
-  ingress {
-    description = "MySQL RDS"
-    from_port = 3306
-    to_port = 3306
-    protocol = "tcp"
-    cidr_blocks = [var.vpc_cidr]
-  }
-
-  ingress {
-    description = "HTTP"
-    from_port = 80
-    to_port = 80
     protocol = "tcp"
     cidr_blocks = [local.anywhere]
   }
@@ -160,6 +144,45 @@ resource "aws_security_group" "main" {
   }
 
   tags = {
-    Name = "BODA security group"
+    Name = "BODA public security group"
+  }
+}
+
+resource "aws_security_group" "private" {
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    description = "ssh"
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = [local.anywhere]
+  }
+
+  ingress {
+    description = "MySQL RDS"
+    from_port = 3306
+    to_port = 3306
+    protocol = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+  }
+
+  ingress {
+    description = "HTTPS"
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    cidr_blocks = [local.anywhere]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [local.anywhere]
+  }
+
+  tags = {
+    Name = "BODA private security group"
   }
 }

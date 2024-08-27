@@ -8,8 +8,8 @@ variable "public_subnet_ids" {
   type        = list(string)
 }
 
-variable "security_group_id" {
-  description = "ID of the security group"
+variable "public_security_group_id" {
+  description = "ID of the public security group"
   type       = string
 }
 
