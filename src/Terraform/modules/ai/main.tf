@@ -10,6 +10,7 @@ resource "aws_instance" "ai" {
   subnet_id     = var.private_subnet_ids[var.instance_indexes["ai"] - 1]
   vpc_security_group_ids = [var.private_security_group_id]
 
+  private_ip = "10.0.4.155"
   iam_instance_profile = var.ec2-s3_iam_instance_profile_name
   
   tags = {
