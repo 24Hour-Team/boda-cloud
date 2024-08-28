@@ -24,6 +24,16 @@ variable "elastic_ips" {
   type        = map(string)
 }
 
+variable "private_ips" {
+  description = "Private IPs for subnets"
+  type        = map(string)
+}
+
+variable "anywhere_ip" {
+  description = "IP address for anywhere"
+  type        = string
+}
+
 // 인스턴스 변수
 variable "instance_type" {
   description = "EC2 instance type"

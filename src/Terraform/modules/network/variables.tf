@@ -37,3 +37,8 @@ variable "instance_indexes" {
   description = "EC2 instance index"
   type        = map(number)
 }
+
+variable "anywhere_ip" {
+  description = "IP address for anywhere"
+  type        = string
+}

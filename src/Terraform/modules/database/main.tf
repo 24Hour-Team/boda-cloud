@@ -1,3 +1,35 @@
+resource "aws_security_group" "db" {
+  vpc_id = var.vpc_id
+
+  ingress {
+    description = "MySQL"
+    from_port = 3306
+    to_port = 3306
+    protocol = "tcp"
+    cidr_blocks = ["${var.private_ips["back"]}/32"]
+  }
+
+  ingress {
+    description = "HTTPS"
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    cidr_blocks = ["${var.private_ips["back"]}/32"]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [var.anywhere_ip]
+  }
+
+  tags = {
+    Name = "BODA database security group"
+  }
+}
+
+
 resource "aws_db_instance" "database" {
     identifier            = var.identifier
     engine                = var.engine
@@ -9,9 +41,10 @@ resource "aws_db_instance" "database" {
     db_name               = var.db_name
     username              = var.db_username
     password              = var.db_password
-
+    
+    publicly_accessible   = false
     skip_final_snapshot   = true
-    vpc_security_group_ids = [var.private_security_group_id]
+    vpc_security_group_ids = [aws_security_group.db.id]
     db_subnet_group_name     = var.database_subnet_group_name
     tags = {
         Name = "${var.identifier}"

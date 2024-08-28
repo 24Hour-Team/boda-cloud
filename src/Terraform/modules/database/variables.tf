@@ -1,3 +1,8 @@
+variable "vpc_id" {
+  description = "ID of the VPC"
+  type        = string
+}
+
 variable identifier {
   description = "RDS instance name"
   type        = string
@@ -48,7 +53,12 @@ variable "database_subnet_group_name" {
   type        = string
 }
 
-variable "private_security_group_id" {
-  description = "ID of the private security group"
-  type       = string
+variable "private_ips" {
+  description = "Private IPs for subnets"
+  type        = map(string)
+}
+
+variable "anywhere_ip" {
+  description = "IP address for anywhere"
+  type        = string
 }
