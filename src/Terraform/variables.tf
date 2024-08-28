@@ -1,19 +1,3 @@
-// IAM 변수
-variable "role_name" {
-  description = "The name of the IAM role"
-  type        = string
-}
-
-variable "iam_instance_profile_name" {
-  description = "The name of the IAM instance profile"
-  type        = string
-}
-
-variable "s3_bucket_arns" {
-  description = "The S3 bucket ARN"
-  type        = string
-}
-
 // 네트워크 변수
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
@@ -64,6 +48,16 @@ variable "ami_ids" {
 variable "ssh_keys" {
   description = "EC2 SSH access key name"
   type        = map(string)
+}
+
+variable "ec2-s3_role_name" {
+  description = "The name of the role to associate with the EC2 instance"
+  type        = string
+}
+
+variable "ec2-s3_iam_instance_profile_name" {
+  description = "The name of the IAM instance profile to associate with the EC2 instance"
+  type        = string
 }
 
 // 데이터베이스 변수
