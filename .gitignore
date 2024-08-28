@@ -38,5 +38,4 @@ terraform.rc
 
 ### Ansible ###
 *.retry
-*.cfg
 vault.yaml
