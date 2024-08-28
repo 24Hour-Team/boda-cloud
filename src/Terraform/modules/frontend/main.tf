@@ -10,6 +10,8 @@ resource "aws_instance" "frontend" {
   subnet_id     = var.public_subnet_ids[var.instance_indexes["front"]]
   vpc_security_group_ids = [var.public_security_group_id]
   
+  private_ip = "10.0.1.167"
+
   tags = {
     Name = "BODA Frontend"
   }
