@@ -6,6 +6,7 @@ module "boda-network" {
   private_subnet_cidrs = var.private_subnet_cidrs
   db_subnet_cidrs = var.db_subnet_cidrs
   elastic_ips = var.elastic_ips
+  anywhere_ip = var.anywhere_ip
   instance_indexes = var.instance_indexes
   instance_names = var.instance_names
   instance_type = var.instance_type
@@ -16,12 +17,13 @@ module "boda-front" {
   
   vpc_id = module.boda-network.vpc_id
   public_subnet_ids = module.boda-network.public_subnet_ids
-  public_security_group_id = module.boda-network.public_security_group_id
 
   instance_type = var.instance_type
   ami_ids = var.ami_ids
   ssh_keys = var.ssh_keys
   elastic_ips = var.elastic_ips
+  private_ips = var.private_ips
+  anywhere_ip = var.anywhere_ip
   instance_indexes = var.instance_indexes
   instance_names = var.instance_names
 }
@@ -31,7 +33,9 @@ module "boda-back" {
   
   vpc_id = module.boda-network.vpc_id
   private_subnet_ids = module.boda-network.private_subnet_ids
-  private_security_group_id = module.boda-network.private_security_group_id
+  elastic_ips = var.elastic_ips
+  private_ips = var.private_ips
+  anywhere_ip = var.anywhere_ip
 
   instance_type = var.instance_type
   instance_indexes = var.instance_indexes
@@ -47,7 +51,8 @@ module "boda-ai" {
   
   vpc_id = module.boda-network.vpc_id
   private_subnet_ids = module.boda-network.private_subnet_ids
-  private_security_group_id = module.boda-network.private_security_group_id
+  private_ips = var.private_ips
+  anywhere_ip = var.anywhere_ip
   
   instance_type = var.instance_type
   instance_indexes = var.instance_indexes
@@ -58,8 +63,10 @@ module "boda-ai" {
 module "boda-db" {
   source = "./modules/database"
   
-  private_security_group_id = module.boda-network.private_security_group_id
+  vpc_id = module.boda-network.vpc_id
   database_subnet_group_name = module.boda-network.database_subnet_group_name
+  private_ips = var.private_ips
+  anywhere_ip = var.anywhere_ip
 
   identifier = var.identifier
   engine = var.engine

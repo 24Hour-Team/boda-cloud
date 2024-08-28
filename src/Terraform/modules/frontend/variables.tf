@@ -8,11 +8,6 @@ variable "public_subnet_ids" {
   type        = list(string)
 }
 
-variable "public_security_group_id" {
-  description = "ID of the public security group"
-  type       = string
-}
-
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
@@ -41,4 +36,14 @@ variable "ssh_keys" {
 variable "elastic_ips" {
   description = "Elastic IPs for public subnets"
   type        = map(string)
+}
+
+variable "private_ips" {
+  description = "Private IPs for subnets"
+  type        = map(string)
+}
+
+variable "anywhere_ip" {
+  description = "IP address for anywhere"
+  type        = string
 }

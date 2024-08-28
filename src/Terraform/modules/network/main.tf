@@ -1,7 +1,3 @@
-locals {
-  anywhere = "0.0.0.0/0"
-}
-
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
   enable_dns_hostnames = true
@@ -75,7 +71,7 @@ resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block = local.anywhere
+    cidr_block = var.anywhere_ip
     gateway_id = aws_internet_gateway.main.id
   }
 
@@ -88,7 +84,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block = local.anywhere
+    cidr_block = var.anywhere_ip
     nat_gateway_id = aws_nat_gateway.main.id
   }
 
@@ -107,82 +103,4 @@ resource "aws_route_table_association" "private" {
   count = length(var.private_subnet_cidrs) - 1
   subnet_id = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private.id
-}
-
-resource "aws_security_group" "public" {
-  vpc_id = aws_vpc.main.id
-
-  ingress {
-    description = "ssh"
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = [local.anywhere]
-  }
-
-  ingress {
-    description = "react app localhost"
-    from_port = 3000
-    to_port = 3000
-    protocol = "tcp"
-    cidr_blocks = [local.anywhere]
-  }
-
-  ingress {
-    description = "HTTPS"
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
-    cidr_blocks = [local.anywhere]
-  }
-
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = [local.anywhere]
-  }
-
-  tags = {
-    Name = "BODA public security group"
-  }
-}
-
-resource "aws_security_group" "private" {
-  vpc_id = aws_vpc.main.id
-
-  ingress {
-    description = "ssh"
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    cidr_blocks = [local.anywhere]
-  }
-
-  ingress {
-    description = "MySQL RDS"
-    from_port = 3306
-    to_port = 3306
-    protocol = "tcp"
-    cidr_blocks = [var.vpc_cidr]
-  }
-
-  ingress {
-    description = "HTTPS"
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
-    cidr_blocks = [local.anywhere]
-  }
-
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = [local.anywhere]
-  }
-
-  tags = {
-    Name = "BODA private security group"
-  }
 }
