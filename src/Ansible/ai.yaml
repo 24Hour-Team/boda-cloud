@@ -25,7 +25,7 @@
       state: latest
 
   - name: Copy BODA Model
-    shell: aws s3 cp "{{ s3_arn }}"/boda-ai/ /home/ec2-user/boda-ai
+    shell: aws s3 cp "{{ s3_arn }}"/boda-ai/ /home/ec2-user/boda-ai/ --recursive
       
   - name: Install python dependencies
     shell: python3 parse_requirements.py requirements.yaml | xargs pip install
