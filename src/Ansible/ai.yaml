@@ -1,14 +1,40 @@
 - hosts: ai
   become: yes
   tasks:
-  - name: Install Git
+  - name: Copy requirements installation file
+    synchronize:
+      src: /home/ec2-user/.Ansible/
+      dest: /home/ec2-user/requirements/
+      delete: yes
+      archive: yes
+      compress: yes
+      rsync_opts:
+        - "--include=*requirements*"
+        - "--exclude=*"
+  
+  - name: Install environment dependencies
     dnf:
-      name: git
-      state: present
+      name:
+        - git
+        - pip
+      state: latest
 
-  - name: Clone ai repo
-    git:
-      # AI 모델 repo 생기면 교체
-      repo: 'https://github.com/24Hour-Team/boda-server.git'
-      dest: '/home/ec2-user/boda-ai'
-      version: develop
+  - name: Install python packages
+    pip:
+      name: pyyaml
+      state: latest
+
+  - name: Copy BODA Model
+    shell: aws s3 cp "{{ s3_arn }}"/boda-ai/ /home/ec2-user/boda-ai/ --recursive
+      
+  - name: Install python dependencies
+    shell: python3 parse_requirements.py requirements.yaml | xargs pip install
+    args:
+      chdir: /home/ec2-user/requirements
+
+  - name: Run BODA
+    shell: python3 main.py
+    args:
+      chdir: /home/ec2-user/boda-ai
+    async: 120
+    poll: 0

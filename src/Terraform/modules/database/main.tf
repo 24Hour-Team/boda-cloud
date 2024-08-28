@@ -11,7 +11,7 @@ resource "aws_db_instance" "database" {
     password              = var.db_password
 
     skip_final_snapshot   = true
-    vpc_security_group_ids = [var.security_group_id]
+    vpc_security_group_ids = [var.private_security_group_id]
     db_subnet_group_name     = var.database_subnet_group_name
     tags = {
         Name = "${var.identifier}"

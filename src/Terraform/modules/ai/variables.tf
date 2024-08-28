@@ -8,8 +8,8 @@ variable "private_subnet_ids" {
   type        = list(string)
 }
 
-variable "security_group_id" {
-  description = "ID of the security group"
+variable "private_security_group_id" {
+  description = "ID of the private security group"
   type       = string
 }
 
@@ -31,4 +31,9 @@ variable "ami_ids" {
 variable "ssh_keys" {
   description = "EC2 SSH access key name"
   type        = map(string)
+}
+
+variable "iam_instance_profile_name" {
+  description = "The name of the IAM instance profile to associate with the EC2 instance"
+  type        = string
 }

@@ -5,7 +5,7 @@
     dnf:
       name:
         - git
-        - java-17-openjdk
+        - java-17-amazon-corretto
       state: present
 
   - name: Clone backend repo
@@ -15,6 +15,6 @@
       version: develop
 
   - name: Change gradlew permission and build application
-    shell: chmod +x gradlew && ./gradlew clean build
+    shell: chmod +x gradlew #&& ./gradlew clean build
     args:
       chdir: /home/ec2-user/boda-server

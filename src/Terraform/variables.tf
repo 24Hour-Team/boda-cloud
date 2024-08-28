@@ -1,3 +1,20 @@
+// IAM 변수
+variable "role_name" {
+  description = "The name of the IAM role"
+  type        = string
+}
+
+variable "iam_instance_profile_name" {
+  description = "The name of the IAM instance profile"
+  type        = string
+}
+
+variable "s3_bucket_arns" {
+  description = "The S3 bucket ARN"
+  type        = string
+}
+
+// 네트워크 변수
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
   type        = string
@@ -49,7 +66,7 @@ variable "ssh_keys" {
   type        = map(string)
 }
 
-// 데이터베이스 변수s
+// 데이터베이스 변수
 variable identifier {
   description = "RDS instance name"
   type        = string

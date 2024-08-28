@@ -15,7 +15,7 @@
 
   - name: Copy PlayBooks
     synchronize:
-      src: ~/KTB Project/TravelAI/boda-cloud/src/Ansible
+      src: ~/dev/TravelAI/boda-cloud/src/Ansible/
       dest: /home/ec2-user/.Ansible/
       delete: yes
       archive: yes
@@ -23,34 +23,30 @@
 
   - name: Install environment dependencies
     dnf:
-      name:
-        - ansible
-        - git
-        - nodejs
-        - npm
-      state: present
+      name: ansible
+      state: latest
       
-  - name: Clone frontend repo
-    git:
-      repo: https://github.com/24Hour-Team/boda-client.git
-      dest: /home/ec2-user/boda-client/
-      version: develop
-
-  - name: Install react dependencies
-    npm:
-      path: /home/ec2-user/boda-client
-      state: present
-
-  - name: Run boda-client
-    shell: npm start
-    args:
-      chdir: /home/ec2-user/boda-client
-    async: 120
-    poll: 0
-
-  - name: React 앱이 실행 중인지 확인
-    shell: pgrep -f "node.*react-scripts start"
-    register: app_status
-    until: app_status.rc == 0
-    retries: 5
-    delay: 10
+  #- name: Clone frontend repo
+  #  git:
+  #    repo: https://github.com/24Hour-Team/boda-client.git
+  #    dest: /home/ec2-user/boda-client/
+  #    version: develop
+#
+  #- name: Install react dependencies
+  #  npm:
+  #    path: /home/ec2-user/boda-client
+  #    state: present
+#
+  #- name: Run boda-client
+  #  shell: npm start
+  #  args:
+  #    chdir: /home/ec2-user/boda-client
+  #  async: 120
+  #  poll: 0
+#
+  #- name: React 앱이 실행 중인지 확인
+  #  shell: pgrep -f "node.*react-scripts start"
+  #  register: app_status
+  #  until: app_status.rc == 0
+  #  retries: 5
+  #  delay: 10
