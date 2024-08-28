@@ -1,5 +1,4 @@
 - hosts: frontend
-  become: yes
   tasks:
   - name: Install environments
     dnf:
@@ -19,14 +18,14 @@
       path: "{{ home_dir }}/boda-client"
       state: present
 
-  - name: Run boda-client
+  - name: Run boda client
     shell: npm start
     args:
       chdir: "{{ home_dir }}/boda-client"
     async: 120
     poll: 0
 
-  - name: React 앱이 실행 중인지 확인
+  - name: Verify react app is active
     shell: pgrep -f "node.*react-scripts start"
     register: app_status
     until: app_status.rc == 0

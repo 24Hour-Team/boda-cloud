@@ -1,5 +1,4 @@
 - hosts: ai
-  become: yes
   become_method: sudo
   tasks:
   - name: Copy requirements installation file
@@ -14,7 +13,7 @@
         - "--include=*requirements*"
         - "--exclude=*"
 
-  - name: Install environment dependencies
+  - name: Install environments
     dnf:
       name:
         - git
@@ -34,7 +33,7 @@
     args:
       chdir: "{{ home_dir }}/requirements"
 
-  - name: Run BODA
+  - name: Run BODA model
     shell: python3 main.py
     args:
       chdir: "{{ home_dir }}/boda-ai"

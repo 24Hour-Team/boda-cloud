@@ -1,20 +1,27 @@
 - hosts: backend
-  become: yes
   tasks:
-  - name: Install Git
+  - name: Install environments
     dnf:
       name:
         - git
         - java-17-amazon-corretto
       state: present
 
-  - name: Clone backend repo
+  - name: Clone backend repository
     git:
       repo: https://github.com/24Hour-Team/boda-server.git
       dest: "{{ home_dir }}/boda-server"
       version: develop
 
+  - name: Change repository permission
+    file:
+      path: "{{ home_dir }}/boda-server"
+      mode: 0755
+      recurse: yes
+
   - name: Build Springboot application
-    shell: chmod +x gradlew #&& ./gradlew clean build
+    shell: ./gradlew clean build
     args:
       chdir: "{{ home_dir }}/boda-server"
+    async: 120
+    poll: 0
