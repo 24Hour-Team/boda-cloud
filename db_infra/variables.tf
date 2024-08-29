@@ -1,3 +1,21 @@
+# VPC 정보 받아오기
+
+variable "vpc_id" {
+  description = "The ID of the VPC"
+  type        = string
+}
+
+variable "vpc_cidr" {
+  description = "The CIDR block for the VPC"
+  type        = string
+}
+
+variable "private_subnet_ids" {
+  description = "The IDs of the public subnets"
+  type        = list(string)
+}
+
+
 
 # RDS 설정
 variable "db_allocated_storage" {
@@ -39,17 +57,3 @@ variable "db_password" {
 }
 
 
-
-
-
-# variable "db_instance_class" {
-#   description = "The instance type for the MySQL database instance"
-#   type        = string
-#   default     = "db.t3.micro"
-# }
-
-# variable "db_allocated_storage" {
-#   description = "The allocated storage size for the MySQL database (in GB)"
-#   type        = number
-#   default     = 20
-# }

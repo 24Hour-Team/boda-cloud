@@ -1,3 +1,22 @@
+variable "vpc_id" {
+  description = "The ID of the VPC"
+  type        = string
+}
+
+variable "vpc_cidr" {
+  description = "The CIDR block for the VPC"
+  type        = string
+  
+}
+
+variable "private_subnet_ids" {
+  description = "The IDs of the public subnets"
+  type        = list(string)
+}
+
+
+
+
 # EC2 인스턴스 설정
 variable "backend_ami" {
   description   = "The AMI ID for the backend server"
@@ -15,3 +34,4 @@ variable "backend_private_ip" {
     type        = string
     #default     = "10.0.48.10"   # 추후에 원하는 IP로 변경
 }
+

@@ -1,3 +1,39 @@
+# VPC Variable
+
+variable "aws_region" {
+  description = "The AWS region where resources will be created"
+  type        = string
+}
+
+variable "vpc_cidr" {
+  description = "The CIDR block for the VPC"
+  type        = string
+}
+
+variable "vpc_name" {
+  description = "The name of the VPC"
+  type        = string
+}
+
+variable "public_subnets_cidr" {
+  description = "The CIDR blocks for the public subnets"
+  type        = list(string)
+}
+
+variable "private_subnets_cidr" {
+  description = "The CIDR blocks for the private subnets"
+  type        = list(string)
+}
+
+variable "availability_zones" {
+  description = "The availability zones to use for the subnets"
+  type        = list(string)
+}
+
+
+
+# Front Variable
+
 variable "frontend_ami_id" {
   type = string
 }
@@ -9,6 +45,9 @@ variable "frontend_instance_type" {
 variable "frontend_key_name" {
   type = string
 }
+
+
+#BackEnd Variable
 
 variable "backend_ami" {
   type = string
@@ -22,6 +61,8 @@ variable "backend_private_ip" {
   type = string
 }
 
+#AI Variable
+
 variable "ai_ami_id" {
   type = string
 }
@@ -34,6 +75,7 @@ variable "ai_key_name" {
   type = string
 }
 
+# DB Variable
 variable "db_allocated_storage" {
   type = number
 }

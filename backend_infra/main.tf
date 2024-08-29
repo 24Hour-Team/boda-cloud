@@ -1,17 +1,3 @@
-# VPC 모듈 가져오기
-module "vpc" {
-  source = "../modules/vpc"
-
-  aws_region            = "ap-northeast-2"
-
-  vpc_cidr              = "10.0.0.0/16"
-  vpc_name              = "BODA-vpc"
-
-  public_subnets_cidr   = ["10.0.16.0/20", "10.0.32.0/20"]
-  private_subnets_cidr  = ["10.0.48.0/20", "10.0.64.0/20"]
-  availability_zones    = ["ap-northeast-2a", "ap-northeast-2c"]
-}
-
 
 ####################
 ###  Security Group
@@ -21,7 +7,7 @@ module "vpc" {
 resource "aws_security_group" "backend_sg" {
     name                = "backend_sg"
     description         = "Allow necessary traffic for backend server"
-    vpc_id              = module.vpc.vpc_id
+    vpc_id              = var.vpc_id
 
 
     # MySQL 접근 허용 (포트 3306)
@@ -30,7 +16,7 @@ resource "aws_security_group" "backend_sg" {
         from_port       = 3306
         to_port         = 3306
         protocol        = "tcp"
-        cidr_blocks      = [module.vpc.vpc_cidr_block]
+        cidr_blocks     = [var.vpc_cidr]
     }
 
     # SSH 접근 허용 (포트 22)
@@ -79,7 +65,8 @@ resource "aws_security_group" "backend_sg" {
 resource "aws_instance" "backend" {
   ami                   = var.backend_ami  # 백엔드 서버에 사용할 AMI ID를 변수로 정의
   instance_type         = var.backend_instance_type # 인스턴스 타입을 변수로 정의
-  subnet_id             = module.vpc.private_subnet_ids[0] # 프라이빗 서브넷 중 하나 선택
+  subnet_id             = var.private_subnet_ids[0] # 프라이빗 서브넷 중 하나 선택
+  private_ip            = var.backend_private_ip
   security_groups       = [aws_security_group.backend_sg.name]
 
   tags = {

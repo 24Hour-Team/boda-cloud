@@ -1,5 +1,16 @@
 # terraform.tfvars
 
+# VPC
+aws_region = "ap-northeast-2"
+vpc_cidr = "10.0.0.0/16"
+vpc_name = "BODA-vpc"
+
+public_subnets_cidr = ["10.0.16.0/20", "10.0.32.0/20"]
+private_subnets_cidr = ["10.0.48.0/20", "10.0.64.0/20"]
+availability_zones = ["ap-northeast-2a", "ap-northeast-2c"]
+
+
+
 # FrontEND
 
 frontend_ami_id        = "ami-FrontEnd"

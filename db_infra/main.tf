@@ -1,18 +1,10 @@
-# VPC 정보를 참조하기 위해 terraform_remote_state 사용
-data "terraform_remote_state" "vpc" {
-  backend = "local"
-  config = {
-    path = "../backend_infra/terraform.tfstate"  # backend_infra에서 생성된 VPC의 상태 파일 경로
-  }
-}
-
 ####################
 ### Security Group
 ####################
 
 resource "aws_security_group" "db_sg" {
-  name        = "db_sg"
-  vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
+  name          = "db_sg"
+  vpc_id        = var.vpc_id
 
   # 데이터베이스 포트 허용 (MySQL 예시: 3306)
   ingress {
@@ -21,7 +13,7 @@ resource "aws_security_group" "db_sg" {
     to_port     = 3306
     protocol    = "tcp"
     # cidr_blocks = ["10.0.0.0/16"]  # VPC 내부에서만 접근 허용
-    cidr_blocks = [data.terraform_remote_state.vpc.outputs.vpc_cidr_block] #VPC 내부에서만 접근 허용
+    cidr_blocks = [var.vpc_cidr] #VPC 내부에서만 접근 허용
   }
 
   
@@ -48,7 +40,7 @@ resource "aws_security_group" "db_sg" {
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "boda single db subnet group"
   subnet_ids = [
-    data.terraform_remote_state.vpc.outputs.private_subnet_ids[0]
+    var.private_subnet_ids[0]
   ]
 
   tags = {
@@ -66,13 +58,13 @@ resource "aws_db_subnet_group" "db_subnet_group" {
 
 resource "aws_db_instance" "db" {
   allocated_storage    = 20
-  engine               = "mysql"
-  engine_version       = "8.0.39"
-  instance_class       = "db.t3.micro"
-  db_name                 = "BODA-db"
+  engine               = var.db_engine
+  engine_version       = var.db_engine_version
+  instance_class       = var.db_instance_class
+  db_name              = var.db_name
   username             = var.db_username
   password             = var.db_password
-  db_subnet_group_name = data.terraform_remote_state.vpc.outputs.private_subnet_ids[0]  # 프라이빗 서브넷 사용
+  db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name  # 프라이빗 서브넷 사용
   vpc_security_group_ids  = [aws_security_group.db_sg.id]
 
   tags = {

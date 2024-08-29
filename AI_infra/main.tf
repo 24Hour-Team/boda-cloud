@@ -1,24 +1,17 @@
-data "terraform_remote_state" "vpc" {
-  backend = "local"
-  config = {
-    path = "../backend_infra/terraform.tfstate"
-  }
-}
-
 ####################
 ### Security Group
 ####################
 
 resource "aws_security_group" "ai_sg" {
-  name        = "ai_sg"
-  vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
+  name          = "ai_sg"
+  vpc_id        = var.vpc_id
 
   # HTTP 포트 허용
   ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"]  # VPC 내부에서만 접근 허용
+    cidr_blocks = [var.vpc_cidr]  # VPC 내부에서만 접근 허용
   }
 
   # 모든 아웃바운드 트래픽 허용
@@ -41,7 +34,7 @@ resource "aws_security_group" "ai_sg" {
 resource "aws_instance" "ai" {
   ami           = var.ai_ami_id
   instance_type = var.ai_instance_type
-  subnet_id     = data.terraform_remote_state.vpc.outputs.private_subnet_ids[0]  # 프라이빗 서브넷 사용
+  subnet_id     = var.private_subnet_ids[0]  # 프라이빗 서브넷 사용
   security_groups = [aws_security_group.ai_sg.id]
 
   tags = {

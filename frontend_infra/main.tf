@@ -1,18 +1,10 @@
-# VPC 정보를 참조하기 위해 terraform_remote_state 사용
-data "terraform_remote_state" "vpc" {
-  backend = "local"
-  config = {
-    path = "../backend_infra/terraform.tfstate"  #backend_infra에서 생성된 VPC의 상태 파일 경로
-  }
-}
-
 ###################
 ### Security Group
 ###################
 
 resource "aws_security_group" "frontend_sg" {
   name        = "frontend_sg"
-  vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
+  vpc_id      = var.vpc_id
 
   # HTTP 접근 허용 (포트 80)
   ingress {
@@ -64,7 +56,7 @@ resource "aws_security_group" "frontend_sg" {
 resource "aws_instance" "frontend" {
   ami           = var.frontend_ami_id
   instance_type = var.frontend_instance_type
-  subnet_id     = data.terraform_remote_state.vpc.outputs.public_subnet_ids[0]  # 퍼블릭 서브넷 사용
+  subnet_id     = var.public_subnet_ids[0]  # 퍼블릭 서브넷 사용
   security_groups = [aws_security_group.frontend_sg.id]
 
   tags = {

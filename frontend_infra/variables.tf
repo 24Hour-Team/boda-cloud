@@ -1,3 +1,22 @@
+variable "vpc_id" {
+  description = "The ID of the VPC"
+  type        = string
+}
+
+variable "vpc_cidr" {
+  description = "The CIDR block for the VPC"
+  type        = string
+  
+}
+
+variable "public_subnet_ids" {
+  description = "The IDs of the public subnets"
+  type        = list(string)
+}
+
+
+
+
 variable "frontend_ami_id" {
   description = "The AMI ID for the frontend server"
   type        = string
@@ -13,3 +32,5 @@ variable "frontend_key_name" {
   description = "The key pair name for the frontend server"
   type        = string
 }
+
+
