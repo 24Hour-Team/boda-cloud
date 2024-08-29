@@ -16,8 +16,8 @@
   - name: Change repository permission
     file:
       path: "{{ home_dir }}/boda-server"
-      mode: 0755
-      recurse: yes
+      mode: "0755"
+      recurse: true
 
   - name: Build Springboot application
     shell: ./gradlew clean build
@@ -25,3 +25,4 @@
       chdir: "{{ home_dir }}/boda-server"
     async: 120
     poll: 0
+  
