@@ -30,6 +30,16 @@ variable "availability_zones" {
   type        = list(string)
 }
 
+variable "frontend_elastic_ip" {
+  description = "elastic IP for FrontEnd"
+  type        = string
+}
+
+variable "nat_elastic_ip" {
+  description = "elastic IP for NAT Gateway"
+  type        = string
+}
+
 
 
 # Front Variable

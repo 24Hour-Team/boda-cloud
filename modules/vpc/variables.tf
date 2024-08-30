@@ -29,3 +29,14 @@ variable "availability_zones" {
   description = "The availability zones to deploy to"
   type        = list(string)
 }
+
+
+variable "frontend_elastic_ip" {
+  description = "elastic IP for FrontEnd"
+  type        = string
+}
+
+variable "nat_elastic_ip" {
+  description = "elastic IP for NAT Gateway"
+  type        = string
+}

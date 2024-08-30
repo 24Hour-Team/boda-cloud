@@ -9,6 +9,9 @@ module "vpc" {
   public_subnets_cidr   = var.public_subnets_cidr
   private_subnets_cidr  = var.private_subnets_cidr
   availability_zones    = var.availability_zones
+
+  frontend_elastic_ip   = var.frontend_elastic_ip
+  nat_elastic_ip        = var.nat_elastic_ip
 }
 
 

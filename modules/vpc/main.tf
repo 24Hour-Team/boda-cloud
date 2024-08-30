@@ -31,7 +31,7 @@ resource "aws_subnet" "public" {
   cidr_block               = var.public_subnets_cidr[count.index]
 
   availability_zone        = var.availability_zones[count.index % local.availability_zone_length]
-  map_public_ip_on_launch  = true                   # Public IP를 자동으로 할당
+  # map_public_ip_on_launch  = true                   # Public IP 자동 할당시 활성화
 
   tags = {
     Name                   = "public-subnet-${count.index + 1}"
@@ -58,17 +58,32 @@ resource "aws_subnet" "private" {
 
 
 ##################
-### Route Table
+### GateWay
 ##################
 
 # 인터넷 게이트웨이 생성(퍼블릭 서브넷용)
-resource "aws_internet_gateway" "gw" {
+resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
   tags = {
-    Name                   = "internet-gateway"
+    Name = "${var.vpc_name}-igw"
   }
 }
 
+# NAT 게이트웨이 생성(퍼블릭 서브넷에 배치)
+resource "aws_nat_gateway" "nat" {
+  allocation_id = var.nat_elastic_ip
+  subnet_id = aws_subnet.public[0].id
+  tags = {
+    Name = "${var.vpc_name}-nat-gateway"
+  }
+  
+}
+
+
+
+##################
+### Route Table
+#################
 
 
 # 퍼블릭 서브넷에 대한 라우트 테이블 설정
@@ -77,18 +92,17 @@ resource "aws_route_table" "public" {
 
   route {
     cidr_block             = "0.0.0.0/0"
-    gateway_id             = aws_internet_gateway.gw.id
+    gateway_id             = aws_internet_gateway.igw.id  #Internet Gateway로 라우팅
   }
   tags = {
-    Name                   = "public-route-table"
+    Name                   = "${var.vpc_name}-public-route-table"
     NetworkType            = "Public"
   }
 }
 
 #라우트 테이블과 서브넷을 연결
 resource "aws_route_table_association" "public_subnet" {
-  count = local.public_subnet_length
-
+  count                    = local.public_subnet_length
   subnet_id                = aws_subnet.public[count.index].id
   route_table_id           = aws_route_table.public.id
 }
@@ -98,17 +112,22 @@ resource "aws_route_table_association" "public_subnet" {
 # 프라이빗 서브넷에 대한 라우트 테이블 설정
 
 resource "aws_route_table" "private" {
+  
   vpc_id = aws_vpc.main.id
 
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat.id   #NAT Gateway를 통해 라우팅
+  }
+
   tags = {
-    Name                   = "private-route-table"
+    Name                   = "${var.vpc_name}-private-route-table"
     NetworkType            = "Private"
   }
 }
 
-resource "aws_route_table_association" "private" {
+resource "aws_route_table_association" "private" {  
   count = local.private_subnet_length
-
   subnet_id                = aws_subnet.private[count.index].id
   route_table_id           = aws_route_table.private.id
 }
