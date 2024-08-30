@@ -1,37 +1,49 @@
-name: CI for develop
+name: CI for frontend
 
 on:
+  # main, develop 브랜치에 push, pull request가 발생했을 경우 실행
   push:
-    branches: [ develop ]
+    branches: [ main, develop ]
+  pull_requrest:
+    branches: [ main, develop ]
 
 jobs:
   build:
+    # 최신 우분투에서 실행
     runs-on: ubuntu-latest
     steps:
+      # 해당 repo를 체크아웃
+      # CI가 실행되는 클라우드에 clone 하는 것과 비슷한 작업
       - name: Checkout repo
         uses: actions/checkout@v4
       
+      # Node.js 설치
       - name: Setup environment
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
 
+      # Node.js 의존성 패키지 중 설치가 안 된 패키지나 변경된 패키지만 설치할 수 있도록 캐싱
       - name: Cache node modules
         uses: actions/cache@v4
         id: cache
         with:
           path: 'node_modules'
-          key: npm-packages-${{ hashFiles('**/package-lock.json') }}
+          # 운영체제, npm packages, package-lock 파일의 해시를 기반으로 키 생성
+          key: ${{ runner.os }}-npm-packages-${{ hashFiles('**/package-lock.json') }}
 
+      # React 의존성 패키지 설치
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
+      # React app 빌드
       - name: Build frontend
         env:
           CI: false
         run: npm run build
 
+      # CI 워크플로우 종료 알림
       - name: Print finish alarm
-        run: echo "All CI workflow finished perfectly!"
+        run: echo "All CI workflow finished without errors!"
