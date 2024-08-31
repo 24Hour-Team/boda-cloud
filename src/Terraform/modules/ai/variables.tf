@@ -18,9 +18,9 @@ variable "instance_indexes" {
   type        = map(number)
 }
 
-variable "ami_ids" {
+variable "ami_id" {
   description = "EC2 AMI ID"
-  type        = map(string)
+  type        = string
 }
 
 variable "ssh_keys" {

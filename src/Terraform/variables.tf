@@ -50,11 +50,6 @@ variable "instance_indexes" {
   type        = map(number)
 }
 
-variable "ami_ids" {
-  description = "EC2 AMI ID"
-  type        = map(string)
-}
-
 variable "ssh_keys" {
   description = "EC2 SSH access key name"
   type        = map(string)
