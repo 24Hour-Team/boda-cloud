@@ -18,7 +18,7 @@ module "vpc" {
 
 
 
-# 루트 디렉토리에서 각 모듈 호출(생성)
+# 루트 디렉토리에서 각 모듈 호출(전달 모듈)-> 여기서 값을 전달받아 서브 디렉토리에서 리소스 프로비저닝
 # FrontEnd Infrastructure Module
 
 module "frontend_infra" {
@@ -87,4 +87,19 @@ module "db_infra" {
   db_name                = var.db_name
   db_username            = var.db_username
   db_password            = var.db_password
+}
+
+
+module "api_gateway" {
+  source = "./modules/api_gateway"
+
+  rest_api_name = "boda-api"
+  stage_name    = "prod"
+  vpc_link_id   = module.vpc_link.vpc_link_id
+}
+
+module "vpc_link" {
+  source = "./modules/vpc_link"
+  
+  load_balancer_arn = aws_lb.example_load_balancer.arn
 }
