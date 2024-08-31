@@ -13,7 +13,7 @@ resource "aws_api_gateway_resource" "v1" {
   path_part = "v1"
 }
 
-resource "aws_api_gateway_resource" "api_resource" {
+resource "aws_api_gateway_resource" "api_resources" {
   for_each = var.api_paths
   rest_api_id = aws_api_gateway_rest_api.example_api.id
   parent_id = aws_api_gateway_resource.v1.id
@@ -24,7 +24,7 @@ resource "aws_api_gateway_resource" "api_resource" {
 resource "aws_api_gateway_method" "api_methods" {
   for_each = var.api_methods
   rest_api_id = aws_api_gateway_rest_api.example_api.id
-  resource_id = aws_api_gateway_resource.api_resource[each.key].id
+  resource_id = aws_api_gateway_resource.api_resources[each.key].id
   http_method = each.value.method
   authorization = "NONE"   #추후에 확인필요
 }
@@ -36,7 +36,7 @@ resource "aws_api_gateway_integration" "api_integration"{
   http_method             = aws_api_gateway_method.api_methods[each.key].http_method
   integration_http_method = each.value.method
   type                    = "HTTP"
-  uri                     = each.value.url
+  uri                     = each.value.uri
 
   # VPC Link(API Gateway to BackEnd)
   connection_type         = "VPC_LINK"
