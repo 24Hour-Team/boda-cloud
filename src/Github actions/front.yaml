@@ -51,3 +51,33 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_JOB_NAME: "빌드"
           GITHUB_JOB_STATUS: ${{ job.status }}
+
+  deployment:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:   
+      - name: Deploy to EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.AWS_FRONT_PRIVATE_KEY }}
+          HOST: ${{ secrets.AWS_FRONT_IP }}
+          USER: ${{ secrets.AWS_USER }}
+        run: |
+          echo "${PRIVATE_KEY}" > private_key.pem && chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i private_key.pem ${USER}@${HOST} '
+          cd boda-client &&
+          git checkout main &&
+          git pull &&
+          npm install --production
+          '
+
+      # 배포 워크플로우 종료 알림
+      - name: Send result to discord
+        uses: th0th/notify-discord@v0.4.1
+        if: always()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_JOB_NAME: "배포"
+          GITHUB_JOB_STATUS: ${{ job.status }}
