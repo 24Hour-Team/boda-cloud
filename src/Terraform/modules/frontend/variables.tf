@@ -23,9 +23,9 @@ variable "instance_names" {
   type        = list(string)
 }
 
-variable "ami_ids" {
+variable "ami_id" {
   description = "EC2 AMI ID"
-  type        = map(string)
+  type        = string
 }
 
 variable "ssh_keys" {

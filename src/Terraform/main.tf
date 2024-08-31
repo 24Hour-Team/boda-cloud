@@ -1,3 +1,7 @@
+module "ami" {
+  source = "./modules/AMI"
+}
+
 module "boda-network" {
   source = "./modules/network"
   
@@ -19,7 +23,7 @@ module "boda-front" {
   public_subnet_ids = module.boda-network.public_subnet_ids
 
   instance_type = var.instance_type
-  ami_ids = var.ami_ids
+  ami_id = module.ami.amazon_linux_id
   ssh_keys = var.ssh_keys
   elastic_ips = var.elastic_ips
   private_ips = var.private_ips
@@ -39,7 +43,7 @@ module "boda-back" {
 
   instance_type = var.instance_type
   instance_indexes = var.instance_indexes
-  ami_ids = var.ami_ids
+  ami_id = module.ami.amazon_linux_id
   ssh_keys = var.ssh_keys
 }
 
@@ -56,7 +60,7 @@ module "boda-ai" {
   
   instance_type = var.instance_type
   instance_indexes = var.instance_indexes
-  ami_ids = var.ami_ids
+  ami_id = module.ami.amazon_linux_id
   ssh_keys = var.ssh_keys
 }
 

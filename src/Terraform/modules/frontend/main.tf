@@ -44,7 +44,7 @@ resource "aws_security_group" "front" {
 
 
 resource "aws_instance" "frontend" {
-  ami           = var.ami_ids["Amazon Linux 2023"]
+  ami           = var.ami_id
   instance_type = var.instance_type
   key_name      = var.ssh_keys["front"]
   subnet_id     = var.public_subnet_ids[var.instance_indexes["front"]]
