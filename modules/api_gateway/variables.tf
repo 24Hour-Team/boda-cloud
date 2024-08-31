@@ -25,10 +25,15 @@ variable "api_paths" {
         "auth/login"      = { path = "login", description = "로그인" },
         "auth/register"   = { path = "register", description = "회원가입 - 추가정보 입력" },
         "auth/logout"     = { path = "logout", description = "로그아웃" },
-        "user"            = { path = "user", description = "사용자 정보" },
-        "spot"            = { path = "spot", description = "여행지" },
-        "recommend"       = { path = "recommend", description = "AI 여행지 추천" },
-        "bookmark"        = { path = "bookmark", description = "북마크" },
+        "user/get"        = { path = "user", description = "사용자 정보 조회" },
+        "user/update"     = { path = "user", description = "사용자 정보 수정" },
+        "user/delete"     = { path = "user", description = "사용자 계정 삭제" },
+        "spot/get"        = { path = "spot", description = "여행지 조회" },
+        "spot/search"     = { path = "spot", description = "여행지 검색" },
+        "recommend/get"   = { path = "recommend", description = "AI 여행지 추천" },
+        "bookmark/get"    = { path = "bookmark", description = "북마크 조회" },
+        "bookmark/create" = { path = "bookmark", description = "북마크 생성" },
+        "bookmark/delete" = { path = "bookmark", description = "북마크 삭제" },
     }
 }
 
