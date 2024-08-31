@@ -1,9 +1,10 @@
 resource "aws_lb" "example_load_balancer" {
   name               = "example-load-balancer"
   internal           = false
-  load_balancer_type = "network"
+  load_balancer_type = "application"
   security_groups    = [aws_security_group.lb_sg.id]
-  subnets            = [aws_subnet.public[*].id]
+  # subnets            = [aws_subnet.public_subnet[*].id]
+  subnets            = var.subnet_ids
   
   enable_deletion_protection = false
 }

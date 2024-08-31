@@ -98,8 +98,17 @@ module "api_gateway" {
   vpc_link_id   = module.vpc_link.vpc_link_id
 }
 
+module "load_balancer" {
+  source = "./modules/load_balancer"
+
+  vpc_id              = module.vpc.vpc_id
+  subnet_ids          = module.vpc.public_subnet_ids
+  # security_group_ids  = [module.vpc.lb_security_group_id]
+}
+
+
 module "vpc_link" {
   source = "./modules/vpc_link"
   
-  load_balancer_arn = aws_lb.example_load_balancer.arn
+  load_balancer_arn = module.load_balancer.example_load_balancer_arn
 }
