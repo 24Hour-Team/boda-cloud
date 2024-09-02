@@ -3,7 +3,7 @@ name: 벡엔드 CI/CD 워크플로우
 on:
   # main, develop 브랜치에 push, pull request가 발생했을 경우 실행
   push:
-    branches: [ main, develop ]
+    branches: [ citest, develop ]
 
 jobs:
   build:
@@ -22,9 +22,7 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
           cache: 'gradle'
-          cache-dependency-path: |
-            '**/*.gradle*'
-            '**/gradle-wrapper.properties'
+          cache-dependency-path: '**/gradle-wrapper.properties'
 
       # Java 의존성 패키지 중 설치가 안 된 패키지나 변경된 패키지만 설치할 수 있도록 캐싱
       - name: Cache Gradle packages
@@ -43,6 +41,14 @@ jobs:
       # gradlew에 실행 권한 부여
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
+
+      # 앱 정보 파일 추가
+      - name: Add application info
+        env:
+          APPLICATION_INFO: ${{ secrets.JAVA_APPLICATION_INFO }}        
+        run: |
+          mkdir ./src/main/resources
+          echo "${APPLICATION_INFO} > ./src/main/resources/application.yaml
 
       # Java app 빌드
       - name: Build backend
@@ -71,11 +77,12 @@ jobs:
           USER: ${{ secrets.AWS_USER }}
         run: |
           echo "${PRIVATE_KEY}" > private_key.pem && chmod 600 private_key.pem
+          scp -o StrictHostKeyChecking=no -i UserKnownHostsFile=/dev/null -i private_key.pem -r ./* ${USER}@${HOST}:/boda-server
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i private_key.pem ${USER}@${HOST} '
           cd boda-server &&
           chmod +x gradlew &&
           ./gradlew build &&
-          ./gradlew run
+          ./gradlew bootRun
           '
 
       # 배포 워크플로우 결과 알림
