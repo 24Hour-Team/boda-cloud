@@ -13,6 +13,13 @@ frontend_elastic_ip = "13.125.77.174"
 nat_elastic_ip = "3.37.24.94"
 
 
+#Load Balancer
+
+domain_name         = "yourdomain.com"
+route53_zone_id     = "Z1234567890EXAMPLE"
+target_group_arn    = "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/example/6d0ecf831eec9f09"
+
+
 
 # FrontEND
 

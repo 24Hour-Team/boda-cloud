@@ -104,6 +104,11 @@ module "load_balancer" {
   vpc_id              = module.vpc.vpc_id
   subnet_ids          = module.vpc.public_subnet_ids
   # security_group_ids  = [module.vpc.lb_security_group_id]
+  route53_zone_id = var.route53_zone_id
+  domain_name     = var.domain_name
+  target_group_arn = var.target_group_arn
+
+  # load_balancer_arn = 여기서 직접할당하지 않음, 모듈 내부에서 생성
 }
 
 

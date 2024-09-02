@@ -42,6 +42,29 @@ variable "nat_elastic_ip" {
 
 
 
+
+# Load Balancer
+
+variable "route53_zone_id" {
+  description = "The Route 53 Hosted Zone ID for DNS validation"
+  type        = string
+}
+
+
+variable "domain_name" {
+  description = "The domain name for the ACM certificate"
+  type        = string
+}
+
+
+variable "target_group_arn" {
+  description = "The ARN of the target group to forward traffic to"
+  type        = string
+}
+
+
+
+
 # Front Variable
 
 variable "frontend_ami_id" {
