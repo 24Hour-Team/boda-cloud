@@ -34,6 +34,27 @@ variable "anywhere_ip" {
   type        = string
 }
 
+// ADS(Application Delivery Service; API GW & LB) 변수
+
+# variable "route53_zone_id" {
+#   description = "The Route 53 Hosted Zone ID for DNS validation"
+#   type        = string
+# }
+
+
+variable "domain_name" {
+  description = "The domain name for the ACM certificate"
+  type        = string
+}
+
+
+# variable "target_group_arn" {
+#   description = "The ARN of the target group to forward traffic to"
+#   type        = string
+# }
+
+
+
 // 인스턴스 변수
 variable "instance_type" {
   description = "EC2 instance type"
