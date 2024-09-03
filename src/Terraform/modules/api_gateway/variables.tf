@@ -15,6 +15,7 @@ variable "vpc_link_id" {
 
 
 
+# path = parent_id + path_part
 variable "api_paths" {
     description  = "List of API paths and their descriptions"
     type         = map(object({
