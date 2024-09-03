@@ -29,10 +29,14 @@ variable "api_paths" {
         "spot/get"        = { path = "spot", description = "여행지 조회" },
         "spot/search"     = { path = "spot", description = "여행지 검색" },
         "recommend/get"   = { path = "recommend", description = "AI 여행지 추천" },
-        "bookmark/get"    = { path = "bookmark", description = "북마크 조회" },
-        "bookmark/create" = { path = "bookmark", description = "북마크 생성" },
-        "bookmark/delete" = { path = "bookmark", description = "북마크 삭제" },
+        # "bookmark/folder"   = { path = "bookmark/folder", description = "북마크 폴더 생성" },
+        # "bookmark/folder/list" = { path = "bookmark/folder/list", description = "북마크 폴더 리스트 조회" },
+        # "bookmark/folder/delete" = { path = "bookmark/folder/{bookmarkFolderId}", description = "북마크 폴더 삭제" },
+        # "bookmark/create"   = { path = "bookmark/{bookmarkFolderId}/{spotId}", description = "북마크 생성" },
+        # "bookmark/list"     = { path = "bookmark/{bookmarkFolderId}", description = "북마크 리스트 조회" },
+        # "bookmark/delete"   = { path = "bookmark/{bookmarkId}", description = "북마크 삭제" }
     }
+    
 }
 
 variable "api_methods" {
@@ -48,9 +52,12 @@ variable "api_methods" {
         "spot/get"        = { method = "GET", uri = "http://backend.internal/api/v1/spot/{spotId}" },
         "spot/search"     = { method = "GET", uri = "http://backend.internal/api/v1/spot" },
         "recommend/get"   = { method = "POST", uri = "http://backend.internal/api/v1/recommend" },
-        "bookmark/get"    = { method = "GET", uri = "http://backend.internal/api/v1/bookmark/{bookmarkId}" },
-        "bookmark/create" = { method = "POST", uri = "http://backend.internal/api/v1/bookmark/folder" },
-        "bookmark/delete" = { method = "DELETE", uri = "http://backend.internal/api/v1/bookmark/{bookmarkId}" },
+        # "bookmark/folder"   = { method = "POST", uri = "http://backend.internal/api/v1/bookmark/folder" },
+        # "bookmark/folder/list" = { method = "GET", uri = "http://backend.internal/api/v1/bookmark/folder/list" },
+        # "bookmark/folder/delete" = { method = "DELETE", uri = "http://backend.internal/api/v1/bookmark/folder/{bookmarkFolderId}" },
+        # "bookmark/create"   = { method = "POST", uri = "http://backend.internal/api/v1/bookmark/{bookmarkFolderId}/{spotId}" },
+        # "bookmark/list"     = { method = "GET", uri = "http://backend.internal/api/v1/bookmark/{bookmarkFolderId}" },
+        # "bookmark/delete"   = { method = "DELETE", uri = "http://backend.internal/api/v1/bookmark/{bookmarkId}" }
     }
 }
 
@@ -78,5 +85,66 @@ variable "user_methods" {
         "user/get"    = { method = "GET", uri = "https://backend.example.com/user" },
         "user/update" = { method = "PATCH", uri = "https://backend.example.com/user" },
         "user/delete" = { method = "DELETE", uri = "https://backend.example.com/user" },
+    }
+}
+
+
+# bookmark folder 관련 경로 정의
+variable "bookmark_folder_paths" {
+    description  = "List of bookmark folder related API paths and their descriptions"
+    type         = map(object({
+        path = string
+        description = string
+    }))
+    default = {
+        # "bookmark/folder" = { path = "", description = "북마크 폴더 생성" },
+        "bookmark/folder/list" = { path = "list", description = "북마크 폴더 리스트 조회" },
+        "bookmark/folder/delete" = { path = "{bookmarkFolderId}", description = "북마크 폴더 삭제" }
+    }
+}
+
+# bookmark/folder 관련 메서드 정의
+variable "bookmark_folder_methods" {
+    description  = "List of bookmark folder related API methods and their descriptions"
+    type         = map(object({
+        method = string
+        uri    = string
+    }))
+    default = {
+        # "bookmark/folder" = { method = "POST", uri = "http://backend.internal/api/v1/bookmark/folder" },
+        "bookmark/folder/list" = { method = "GET", uri = "http://backend.internal/api/v1/bookmark/folder/list" },
+        "bookmark/folder/delete" = { method = "DELETE", uri = "http://backend.internal/api/v1/bookmark/folder/{bookmarkFolderId}" }
+    }
+}
+
+
+
+
+
+# bookmark 관련 경로 정의
+variable "bookmark_paths" {
+    description  = "List of bookmark related API paths and their descriptions"
+    type         = map(object({
+        path = string
+        description = string
+    }))
+    default = {
+        "bookmark/create" = { path = "create", description = "북마크 생성" },
+        "bookmark/list"   = { path = "{bookmarkFolderId}", description = "북마크 리스트 조회" },
+        "bookmark/delete" = { path = "{bookmarkId}", description = "북마크 삭제" }
+    }
+}
+
+# bookmark 관련 메서드 정의
+variable "bookmark_methods" {
+    description  = "List of bookmark related API methods and their descriptions"
+    type         = map(object({
+        method = string
+        uri    = string
+    }))
+    default = {
+        "bookmark/create" = { method = "POST", uri = "http://backend.internal/api/v1/bookmark/create" },
+        "bookmark/list"   = { method = "GET", uri = "http://backend.internal/api/v1/bookmark/{bookmarkFolderId}" },
+        "bookmark/delete" = { method = "DELETE", uri = "http://backend.internal/api/v1/bookmark/{bookmarkId}" }
     }
 }
