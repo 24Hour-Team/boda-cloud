@@ -14,6 +14,7 @@ resource "aws_security_group" "lb_sg" {
   vpc_id = var.vpc_id
 
   ingress {
+    description = "HTTP"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -21,6 +22,7 @@ resource "aws_security_group" "lb_sg" {
   }
 
   ingress {
+    description = "HTTPS"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -35,12 +37,12 @@ resource "aws_security_group" "lb_sg" {
   }
 }
 
-# Route 53 호스티드 존
+# Route 53 호스티드 존, DNS를 IP에 매핑
 resource "aws_route53_zone" "example_route53_zone" {
   name = var.domain_name
 }
 
-# Load Balancer Target Group
+# Load Balancer Target Group, 로드밸런서가 트래픽을 분산시키는 백엔드 리소스를 정의
 resource "aws_lb_target_group" "example_target_group" {
   name     = "example-target-group"
   port     = 80
@@ -68,7 +70,7 @@ locals {
 
 
 
-# ACM 인증서 생성
+# ACM 인증서 생성(클라이언트<->로드밸런서)
 resource "aws_acm_certificate" "example_cert" {
   domain_name = "YOURDOMAIN.com"   #추후에 반드시 변경
   validation_method = "DNS"
