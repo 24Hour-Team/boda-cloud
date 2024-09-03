@@ -3,7 +3,7 @@ name: 프런트엔드 CI/CD 워크플로우
 on:
   # main, develop 브랜치에 push, pull request가 발생했을 경우 실행
   push:
-    branches: [ main, develop ]
+    branches: [ CICD, develop ]
 
 jobs:
   build:
@@ -40,7 +40,7 @@ jobs:
       - name: Build frontend
         run: npm run build
         env:
-          CI: true
+          CI: false
 
       # 빌드 워크플로우 종료 알림
       - name: Send result to discord
@@ -55,22 +55,22 @@ jobs:
   deployment:
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/CICD' && github.event_name == 'push'
 
-    steps:   
-      - name: Deploy to EC2
+    steps:
+      - name: show dir
+        run: ls -al
+
+      - name: Deploy to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --follow-symlinks --delete
         env:
-          PRIVATE_KEY: ${{ secrets.AWS_FRONT_PRIVATE_KEY }}
-          HOST: ${{ secrets.AWS_FRONT_IP }}
-          USER: ${{ secrets.AWS_USER }}
-        run: |
-          echo "${PRIVATE_KEY}" > private_key.pem && chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i private_key.pem ${USER}@${HOST} '
-          cd boda-client &&
-          git checkout main &&
-          git pull &&
-          npm install --production
-          '
+          AWS_S3_BUCKET: ${{ secrets.AWS_CLIENT_DEPLOY_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'ap-northeast-2'
+          SOURCE_DIR: 'build'
 
       # 배포 워크플로우 종료 알림
       - name: Send result to discord

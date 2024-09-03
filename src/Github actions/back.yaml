@@ -42,17 +42,22 @@ jobs:
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
 
-      # 앱 정보 파일 추가
-      - name: Add application info
-        env:
-          APPLICATION_INFO: ${{ secrets.JAVA_APPLICATION_INFO }}        
-        run: |
-          mkdir ./src/main/resources
-          echo "${APPLICATION_INFO} > ./src/main/resources/application.yaml
+      # - name: Add application info
+      #   env:
+      #     APPLICATION_INFO: ${{ secrets.JAVA_APPLICATION_INFO }}        
+      #   run: |
+      #     mkdir ./src/main/resources
+      #     echo "${APPLICATION_INFO} > ./src/main/resources/application.yaml
 
       # Java app 빌드
       - name: Build backend
         run: ./gradlew build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: boda-server
+          path: build/libs/boda-server-0.0.1-SNAPSHOT.jar
 
       # 빌드 워크플로우 결과 알림
       - name: Send result to discord
@@ -64,33 +69,38 @@ jobs:
           GITHUB_JOB_NAME: "Build"
           GITHUB_JOB_STATUS: ${{ job.status }}
 
-  # deployment:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  deployment:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/citest' && github.event_name == 'push'
 
-  #   steps:   
-  #     - name: Deploy to EC2
-  #       env:
-  #         PRIVATE_KEY: ${{ secrets.AWS_FRONT_PRIVATE_KEY }}
-  #         HOST: ${{ secrets.AWS_FRONT_IP }}
-  #         USER: ${{ secrets.AWS_USER }}
-  #       run: |
-  #         echo "${PRIVATE_KEY}" > private_key.pem && chmod 600 private_key.pem
-  #         scp -o StrictHostKeyChecking=no -i UserKnownHostsFile=/dev/null -i private_key.pem -r ./* ${USER}@${HOST}:/boda-server
-  #         ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i private_key.pem ${USER}@${HOST} '
-  #         cd boda-server &&
-  #         chmod +x gradlew &&
-  #         ./gradlew build &&        # 이 부분은 없어 질 수 있지만 java dependencies가 설치 안 된 경우엔 
-  #         ./gradlew bootRun
-  #         '
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: boda-server
+          
+      - name: Display structure of downloaded files
+        run: ls -R
 
-  #     # 배포 워크플로우 결과 알림
-  #     - name: Send result to discord
-  #       uses: th0th/notify-discord@v0.4.1
-  #       if: always()
-  #       env:
-  #         DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-  #         GITHUB_ACTOR: ${{ github.actor }}
-  #         GITHUB_JOB_NAME: "Deployment"
-  #         GITHUB_JOB_STATUS: ${{ job.status }}
+      - name: Deploy to EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.AWS_FRONT_PRIVATE_KEY }}
+          HOST: ${{ secrets.AWS_FRONT_IP }}
+          USER: ${{ secrets.AWS_USER }}
+        run: |
+          echo "${PRIVATE_KEY}" > private_key.pem && chmod 600 private_key.pem
+          scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i private_key.pem -r ./* ${USER}@${HOST}:/boda-server
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i private_key.pem ${USER}@${HOST} '
+          cd boda-server &&
+          '
+
+      # 배포 워크플로우 결과 알림
+      - name: Send result to discord
+        uses: th0th/notify-discord@v0.4.1
+        if: always()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_JOB_NAME: "Deployment"
+          GITHUB_JOB_STATUS: ${{ job.status }}
