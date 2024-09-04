@@ -35,6 +35,10 @@ resource "aws_security_group" "lb_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = {
+    Name = "BODA load balancer security group"
+  }
 }
 
 # Route 53 호스티드 존, DNS를 IP에 매핑
@@ -72,7 +76,7 @@ locals {
 
 # ACM 인증서 생성(클라이언트<->로드밸런서)
 resource "aws_acm_certificate" "boda_cert" {
-  domain_name = "YOURDOMAIN.com"   #추후에 반드시 변경
+  domain_name = "boda.com"   #추후에 반드시 변경
   validation_method = "DNS"
 
   lifecycle {
@@ -114,6 +118,8 @@ resource "aws_route53_record" "boda_cert_validation" {
   zone_id = aws_route53_zone.boda_route53_zone.zone_id
   records = [each.value.value]
   ttl     = 60
+
+  #depends_on = [ aws_acm_certificate.boda_certs ]
 }
 
 #aws_acm_certificate 리소스에 대한 검증 설정
