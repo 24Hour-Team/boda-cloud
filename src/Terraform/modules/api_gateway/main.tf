@@ -335,7 +335,17 @@ resource "aws_api_gateway_integration" "spot_search_integration" {
 
 # API Gateway 배포 리소스
 resource "aws_api_gateway_deployment" "boda_deployment" {
-  depends_on  = [aws_api_gateway_method.api_methods]
+  depends_on  = [
+    aws_api_gateway_method.api_methods,
+    aws_api_gateway_integration.api_integration,
+    aws_api_gateway_integration.user_integration,
+    aws_api_gateway_integration.bookmark_folder_integration,
+    aws_api_gateway_integration.bookmark_list_integration,
+    aws_api_gateway_integration.bookmark_delete_integration,
+    aws_api_gateway_integration.bookmark_create_integration,
+    aws_api_gateway_integration.spot_get_integration,
+    aws_api_gateway_integration.spot_search_integration
+  ]
   rest_api_id = aws_api_gateway_rest_api.boda_api.id
   stage_name  = var.stage_name
 }
