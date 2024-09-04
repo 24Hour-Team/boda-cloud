@@ -26,8 +26,8 @@ variable "api_paths" {
         "auth/login"      = { path = "login", description = "로그인" },
         "auth/register"   = { path = "register", description = "회원가입 - 추가정보 입력" },
         "auth/logout"     = { path = "logout", description = "로그아웃" },
-        "spot/get"        = { path = "spot", description = "여행지 조회" },
-        "spot/search"     = { path = "spot", description = "여행지 검색" },
+        # "spot/get"        = { path = "spot", description = "여행지 조회" },
+        # "spot/search"     = { path = "spot", description = "여행지 검색" },
         "recommend/get"   = { path = "recommend", description = "AI 여행지 추천" },
         # "bookmark/folder"   = { path = "bookmark/folder", description = "북마크 폴더 생성" },
         # "bookmark/folder/list" = { path = "bookmark/folder/list", description = "북마크 폴더 리스트 조회" },
@@ -49,8 +49,8 @@ variable "api_methods" {
         "auth/login"      = { method = "GET", uri = "http://backend.internal/api/v1/login" },
         "auth/register"   = { method = "POST", uri = "http://backend.internal/api/v1/register" },
         "auth/logout"     = { method = "GET", uri = "http://backend.internal/api/v1/logout" },
-        "spot/get"        = { method = "GET", uri = "http://backend.internal/api/v1/spot/{spotId}" },
-        "spot/search"     = { method = "GET", uri = "http://backend.internal/api/v1/spot" },
+        # "spot/get"        = { method = "GET", uri = "http://backend.internal/api/v1/spot/{spotId}" },
+        # "spot/search"     = { method = "GET", uri = "http://backend.internal/api/v1/spot" },
         "recommend/get"   = { method = "POST", uri = "http://backend.internal/api/v1/recommend" },
         # "bookmark/folder"   = { method = "POST", uri = "http://backend.internal/api/v1/bookmark/folder" },
         # "bookmark/folder/list" = { method = "GET", uri = "http://backend.internal/api/v1/bookmark/folder/list" },
@@ -121,60 +121,34 @@ variable "bookmark_folder_methods" {
 
 #####################################################
 
-# # bookmark 관련 경로 정의
-# variable "bookmark_paths" {
-#     description  = "List of bookmark related API paths and their descriptions"
-#     type         = map(object({
-#         path = string
-#         description = string
-#     }))
-#     default = {
-#         # "bookmark/create" = { path = "create", description = "북마크 생성" },
-#         "bookmark/list"   = { path = "{bookmarkFolderId}", description = "북마크 리스트 조회" },
-#         "bookmark/delete" = { path = "{bookmarkId}", description = "북마크 삭제" }
-#     }
-# }
-
-# # bookmark 관련 메서드 정의
-# variable "bookmark_methods" {
-#     description  = "List of bookmark related API methods and their descriptions"
-#     type         = map(object({
-#         method = string
-#         uri    = string
-#     }))
-#     default = {
-#         # "bookmark/create" = { method = "POST", uri = "http://backend.internal/api/v1/bookmark/create" },
-#         "bookmark/list"   = { method = "GET", uri = "http://backend.internal/api/v1/bookmark/{bookmarkFolderId}" },
-#         "bookmark/delete" = { method = "DELETE", uri = "http://backend.internal/api/v1/bookmark/{bookmarkId}" }
-#     }
-# }
+# bookmark 관련 경로와 메서드는 개별적으로 리소스를 정의하여 여기선 정의할 필요없음
 
 ##################################################
 
-# /spot 관련 경로 정의
-variable "spot_paths" {
-  description = "List of spot related API paths"
-  type = map(object({
-    path = string
-    description = string
-  }))
-  default = {
-    "spot/get"  = { path = "{spotId}", description = "여행지 상세 조회" }
-  }
-}
+# # /spot 관련 경로 정의
+# variable "spot_paths" {
+#   description = "List of spot related API paths"
+#   type = map(object({
+#     path = string
+#     description = string
+#   }))
+#   default = {
+#     "spot/get"  = { path = "{spotId}", description = "여행지 상세 조회" }
+#   }
+# }
 
 # /spot 관련 메서드 정의
-variable "spot_methods" {
-  description = "List of spot related API methods"
-  type = map(object({
-    method = string
-    uri    = string
-  }))
-  default = {
-    "spot/get"  = { method = "GET", uri = "http://backend.internal/api/v1/spot/{spotId}" },
-    "spot/search" = { method = "GET", uri = "http://backend.internal/api/v1/spot" }
-  }
-}
+# variable "spot_methods" {
+#   description = "List of spot related API methods"
+#   type = map(object({
+#     method = string
+#     uri    = string
+#   }))
+#   default = {
+#     "spot/get"  = { method = "GET", uri = "http://backend.internal/api/v1/spot/{spotId}" },
+#     "spot/search" = { method = "GET", uri = "http://backend.internal/api/v1/spot" }
+#   }
+# }
 
 # /spot/search 관련 통합을 위한 URI 정의
 variable "spot_search_uri" {
