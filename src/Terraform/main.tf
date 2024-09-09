@@ -82,3 +82,31 @@ module "boda-db" {
   db_username = var.db_username
   db_password = var.db_password
 }
+
+
+module "boda-api_gateway" {
+  source ="./modules/api_gateway"
+
+  rest_api_name = "boda-api"
+  stage_name = "prod"
+  vpc_link_id = module.boda-vpc_link.vpc_link_id
+}
+
+module "boda-load_balancer" {
+  source = "./modules/load_balancer"
+
+  vpc_id = module.boda-network.vpc_id
+  subnet_ids = module.boda-network.public_subnet_ids
+
+  # route53_zone_id = var.route53_zone_id
+  domain_name = var.domain_name
+  # target_group_arn = var.target_group_arn
+  
+}
+
+module "boda-vpc_link" {
+  source = "./modules/vpc_link"
+
+  load_balancer_arn = module.boda-load_balancer.boda_load_balancer_arn
+  
+}
