@@ -76,7 +76,7 @@ locals {
 
 # ACM 인증서 생성(클라이언트<->로드밸런서)
 resource "aws_acm_certificate" "boda_cert" {
-  domain_name = "boda.com"   #추후에 반드시 변경
+  domain_name = var.domain_name   #추후에 반드시 변경
   validation_method = "DNS"
 
   lifecycle {
@@ -119,7 +119,7 @@ resource "aws_route53_record" "boda_cert_validation" {
   records = [each.value.value]
   ttl     = 60
 
-  #depends_on = [ aws_acm_certificate.boda_certs ]
+  depends_on = [ aws_acm_certificate.boda_cert ]
 }
 
 #aws_acm_certificate 리소스에 대한 검증 설정
