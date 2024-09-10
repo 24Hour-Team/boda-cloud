@@ -39,3 +39,5 @@ terraform.rc
 ### Ansible ###
 *.retry
 vault.yaml
+
+.DS_Store
