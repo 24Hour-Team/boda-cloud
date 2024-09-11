@@ -36,7 +36,7 @@ resource "aws_subnet" "db" {
   availability_zone = data.aws_availability_zones.selected.names[count.index]
   
   tags = {
-    Name = "${data.aws_availability_zones.selected.names[count.index]} DB BODA subnet"
+    Name = "DB BODA subnet ${data.aws_availability_zones.selected.names[count.index]}"
   }
 }
 
@@ -94,7 +94,7 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "public" {
-  count = 2
+  count = length(aws_subnet.public)
   subnet_id = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
 }

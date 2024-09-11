@@ -9,14 +9,6 @@ resource "aws_security_group" "db" {
     cidr_blocks = ["${var.private_ips["back"]}/32"]
   }
 
-  ingress {
-    description = "HTTPS"
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
-    cidr_blocks = ["${var.private_ips["back"]}/32"]
-  }
-
   egress {
     from_port = 0
     to_port = 0
