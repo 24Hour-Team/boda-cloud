@@ -23,29 +23,11 @@ resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.private_subnet_cidrs[count.index + 1]
   availability_zone = data.aws_availability_zones.selected.names[1]
+  map_public_ip_on_launch = true
   
   tags = {
     Name = "${var.instance_names[count.index + 1]} BODA subnet"
   }
-}
-
-resource "aws_subnet" "db" {
-  count             = length(var.db_subnet_cidrs)
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = var.db_subnet_cidrs[count.index]
-  availability_zone = data.aws_availability_zones.selected.names[count.index]
-  
-  tags = {
-    Name = "DB BODA subnet ${data.aws_availability_zones.selected.names[count.index]}"
-  }
-}
-
-resource "aws_db_subnet_group" "db" {
-    subnet_ids = aws_subnet.db[*].id
-
-    tags = {
-        Name = "BODA MySQL RDS subnet group"
-    }
 }
 
 resource "aws_internet_gateway" "main" {
@@ -56,16 +38,16 @@ resource "aws_internet_gateway" "main" {
   }
 }
 
-resource "aws_nat_gateway" "main" {
-  allocation_id = data.aws_eip.nat.id
-  subnet_id = aws_subnet.public[1].id
+# resource "aws_nat_gateway" "main" {
+#   allocation_id = data.aws_eip.nat.id
+#   subnet_id = aws_subnet.public[1].id
 
-  tags = {
-    Name = "BODA nat gateway"
-  }
+#   tags = {
+#     Name = "BODA nat gateway"
+#   }
 
-  depends_on = [ aws_internet_gateway.main ]
-}
+#   depends_on = [ aws_internet_gateway.main ]
+# }
 
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
@@ -85,7 +67,8 @@ resource "aws_route_table" "private" {
 
   route {
     cidr_block = var.anywhere_ip
-    nat_gateway_id = aws_nat_gateway.main.id
+    //nat_gateway_id = aws_nat_gateway.main.id
+    gateway_id = aws_internet_gateway.main.id
   }
 
   tags = {
@@ -103,4 +86,19 @@ resource "aws_route_table_association" "private" {
   count = length(var.private_subnet_cidrs) - 1
   subnet_id = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private.id
+}
+
+resource "aws_subnet" "test" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.9.0/24"
+  availability_zone = data.aws_availability_zones.selected.names[0]
+  
+  tags = {
+    Name = "Test Subnet"
+  }
+}
+
+resource "aws_route_table_association" "test" {
+  subnet_id = aws_subnet.test.id
+  route_table_id = aws_route_table.public.id
 }

@@ -8,7 +8,6 @@ module "boda-network" {
   vpc_cidr = var.vpc_cidr
   public_subnet_cidrs = var.public_subnet_cidrs
   private_subnet_cidrs = var.private_subnet_cidrs
-  db_subnet_cidrs = var.db_subnet_cidrs
   elastic_ips = var.elastic_ips
   anywhere_ip = var.anywhere_ip
   instance_indexes = var.instance_indexes
@@ -16,8 +15,8 @@ module "boda-network" {
   instance_type = var.instance_type
 }
 
-module "boda-front" {
-  source = "./modules/frontend"
+module "boda-bastion" {
+  source = "./modules/bastion"
   
   vpc_id = module.boda-network.vpc_id
   public_subnet_ids = module.boda-network.public_subnet_ids
@@ -68,7 +67,7 @@ module "boda-db" {
   source = "./modules/database"
   
   vpc_id = module.boda-network.vpc_id
-  database_subnet_group_name = module.boda-network.database_subnet_group_name
+  db_subnet_cidrs = var.db_subnet_cidrs
   private_ips = var.private_ips
   anywhere_ip = var.anywhere_ip
 

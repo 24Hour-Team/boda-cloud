@@ -6,7 +6,7 @@ resource "aws_security_group" "back" {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    cidr_blocks = ["${var.private_ips["front"]}/32"]
+    cidr_blocks = ["${var.private_ips["bastion"]}/32"]
   }
 
   ingress {
@@ -14,7 +14,7 @@ resource "aws_security_group" "back" {
     from_port = 443
     to_port = 443
     protocol = "tcp"
-    cidr_blocks = ["${var.private_ips["front"]}/32"]
+    cidr_blocks = ["${var.private_ips["bastion"]}/32"]
   }
 
   egress {

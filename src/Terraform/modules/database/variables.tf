@@ -3,6 +3,11 @@ variable "vpc_id" {
   type        = string
 }
 
+variable "db_subnet_cidrs" {
+  description = "CIDR blocks for the database subnets"
+  type        = list(string)
+}
+
 variable identifier {
   description = "RDS instance name"
   type        = string
@@ -45,11 +50,6 @@ variable "db_username" {
 
 variable "db_password" {
   description = "Database password"
-  type        = string
-}
-
-variable "database_subnet_group_name" {
-  description = "Name of the database subnet group"
   type        = string
 }
 

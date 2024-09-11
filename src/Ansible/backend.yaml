@@ -7,17 +7,17 @@
         - java-17-amazon-corretto
       state: present
 
-  - name: Clone backend repository
-    git:
-      repo: https://github.com/24Hour-Team/boda-server.git
-      dest: "{{ home_dir }}/boda-server"
-      version: develop
+  # - name: Clone backend repository
+  #   git:
+  #     repo: https://github.com/24Hour-Team/boda-server.git
+  #     dest: "{{ home_dir }}/boda-server"
+  #     version: develop
 
-  - name: Change repository permission
-    file:
-      path: "{{ home_dir }}/boda-server"
-      mode: "0755"
-      recurse: true
+  # - name: Change repository permission
+  #   file:
+  #     path: "{{ home_dir }}/boda-server"
+  #     mode: "0755"
+  #     recurse: true
 
   # - name: Build Springboot application
   #   shell: ./gradlew clean build
