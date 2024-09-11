@@ -1,5 +1,5 @@
-resource "aws_lb" "example_load_balancer" {
-  name               = "example-load-balancer"
+resource "aws_lb" "boda_load_balancer" {
+  name               = "boda-load-balancer"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.lb_sg.id]
@@ -35,16 +35,20 @@ resource "aws_security_group" "lb_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = {
+    Name = "BODA load balancer security group"
+  }
 }
 
 # Route 53 호스티드 존, DNS를 IP에 매핑
-resource "aws_route53_zone" "example_route53_zone" {
+resource "aws_route53_zone" "boda_route53_zone" {
   name = var.domain_name
 }
 
 # Load Balancer Target Group, 로드밸런서가 트래픽을 분산시키는 백엔드 리소스를 정의
-resource "aws_lb_target_group" "example_target_group" {
-  name     = "example-target-group"
+resource "aws_lb_target_group" "boda_target_group" {
+  name     = "boda-target-group"
   port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id
@@ -62,8 +66,8 @@ resource "aws_lb_target_group" "example_target_group" {
 
 # 로컬 변수를 이용해 생성된 값을 저장
 locals {
-  route53_zone_id  = aws_route53_zone.example_route53_zone.zone_id
-  target_group_arn = aws_lb_target_group.example_target_group.arn
+  route53_zone_id  = aws_route53_zone.boda_route53_zone.zone_id
+  target_group_arn = aws_lb_target_group.boda_target_group.arn
 }
 
 
@@ -71,8 +75,8 @@ locals {
 
 
 # ACM 인증서 생성(클라이언트<->로드밸런서)
-resource "aws_acm_certificate" "example_cert" {
-  domain_name = "YOURDOMAIN.com"   #추후에 반드시 변경
+resource "aws_acm_certificate" "boda_cert" {
+  domain_name = var.domain_name   #추후에 반드시 변경
   validation_method = "DNS"
 
   lifecycle {
@@ -91,18 +95,18 @@ resource "aws_acm_certificate" "example_cert" {
 
 # DNS 검증 설정
 
-# resource "aws_route53_record" "example_cert_validation" {
-#   name    = aws_acm_certificate.example_cert.domain_validation_options[0].resource_record_name
-#   type    = aws_acm_certificate.example_cert.domain_validation_options[0].resource_record_type
+# resource "aws_route53_record" "boda_cert_validation" {
+#   name    = aws_acm_certificate.boda_cert.domain_validation_options[0].resource_record_name
+#   type    = aws_acm_certificate.boda_cert.domain_validation_options[0].resource_record_type
 #   zone_id = "your-route53-zone-id"
-#   records = [aws_acm_certificate.example_cert.domain_validation_options[0].resource_record_value]
+#   records = [aws_acm_certificate.boda_cert.domain_validation_options[0].resource_record_value]
 #   ttl     = 60
 # }
 
 # DNS 검증 설정
-resource "aws_route53_record" "example_cert_validation" {
+resource "aws_route53_record" "boda_cert_validation" {
   for_each = {
-    for dvo in aws_acm_certificate.example_cert.domain_validation_options : dvo.domain_name => {
+    for dvo in aws_acm_certificate.boda_cert.domain_validation_options : dvo.domain_name => {
       name  = dvo.resource_record_name
       type  = dvo.resource_record_type
       value = dvo.resource_record_value
@@ -111,26 +115,28 @@ resource "aws_route53_record" "example_cert_validation" {
 
   name    = each.value.name
   type    = each.value.type
-  zone_id = aws_route53_zone.example_route53_zone.zone_id
+  zone_id = aws_route53_zone.boda_route53_zone.zone_id
   records = [each.value.value]
   ttl     = 60
+
+  depends_on = [ aws_acm_certificate.boda_cert ]
 }
 
 #aws_acm_certificate 리소스에 대한 검증 설정
-resource "aws_acm_certificate_validation" "example_cert_validation" {
-  certificate_arn         = aws_acm_certificate.example_cert.arn
-  validation_record_fqdns = [for record in aws_route53_record.example_cert_validation : record.fqdn]
+resource "aws_acm_certificate_validation" "boda_cert_validation" {
+  certificate_arn         = aws_acm_certificate.boda_cert.arn
+  validation_record_fqdns = [for record in aws_route53_record.boda_cert_validation : record.fqdn]
 }
 
 # HTTPS 리스너 추가
 
 resource "aws_lb_listener" "https" {
-  load_balancer_arn = aws_lb.example_load_balancer.arn
+  load_balancer_arn = aws_lb.boda_load_balancer.arn
   port = "443"
   protocol = "HTTPS"
 
   ssl_policy = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = aws_acm_certificate.example_cert.arn
+  certificate_arn   = aws_acm_certificate.boda_cert.arn
 
   default_action {
     type             = "forward"

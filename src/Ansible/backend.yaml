@@ -19,10 +19,10 @@
       mode: "0755"
       recurse: true
 
-  - name: Build Springboot application
-    shell: ./gradlew clean build
-    args:
-      chdir: "{{ home_dir }}/boda-server"
-    async: 120
-    poll: 0
+  # - name: Build Springboot application
+  #   shell: ./gradlew clean build
+  #   args:
+  #     chdir: "{{ home_dir }}/boda-server"
+  #   async: 120
+  #   poll: 0
   

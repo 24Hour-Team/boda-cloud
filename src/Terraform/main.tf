@@ -107,6 +107,6 @@ module "boda-load_balancer" {
 module "boda-vpc_link" {
   source = "./modules/vpc_link"
 
-  load_balancer_arn = module.boda-load_balancer.example_load_balancer_arn
+  load_balancer_arn = module.boda-load_balancer.boda_load_balancer_arn
   
 }

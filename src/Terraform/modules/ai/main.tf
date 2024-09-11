@@ -1,7 +1,7 @@
-resource "aws_iam_instance_profile" "boda_ec2-s3_instance_profile" {
-  name = var.ec2-s3_iam_instance_profile_name
-  role = var.ec2-s3_role_name
-}
+# resource "aws_iam_instance_profile" "boda_ec2-s3_instance_profile" {
+#   name = var.ec2-s3_iam_instance_profile_name
+#   role = var.ec2-s3_role_name
+# }
 
 resource "aws_security_group" "ai" {
   vpc_id = var.vpc_id
