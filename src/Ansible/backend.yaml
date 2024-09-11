@@ -1,11 +1,42 @@
 - hosts: backend
   tasks:
-  - name: Install environments
+  - name: Install environment
     dnf:
       name:
-        - git
-        - java-17-amazon-corretto
-      state: present
+        - docker
+        - pip
+      state: latest
+
+  - name: Start Docker
+    shell: |
+      systemctl start docker
+      systemctl enable docker
+
+  - name: Install docker-compose
+    shell: |
+      curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+      chmod +x /usr/local/bin/docker-compose
+
+  - name: Change Docker group
+    shell: |
+      newgrp docker
+      sudo usermod -aG docker $USER
+      sudo systemctl restart docker
+
+  - name: Download Server
+    shell: aws s3 cp {{ s3_bucket }}/boda-server/docker-compose.yaml .
+
+  - name: Start Docker Compose
+    shell: docker-compose up
+    async: 120
+    poll: 0
+    
+  # - name: Install environments
+  #   dnf:
+  #     name:
+  #       - git
+  #       - java-17-amazon-corretto
+  #     state: present
 
   # - name: Clone backend repository
   #   git:

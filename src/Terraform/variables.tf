@@ -42,10 +42,10 @@ variable "anywhere_ip" {
 # }
 
 
-variable "domain_name" {
-  description = "The domain name for the ACM certificate"
-  type        = string
-}
+# variable "domain_name" {
+#   description = "The domain name for the ACM certificate"
+#   type        = string
+# }
 
 
 # variable "target_group_arn" {
@@ -130,4 +130,26 @@ variable "db_username" {
 variable "db_password" {
   description = "Database password"
   type        = string
+}
+
+// 로드 밸런서 변수
+variable "domain_name" {
+  description = "The domain name for the ACM certificate"
+  type        = string
+}
+
+// API Gateway 변수
+variable "api_name" {
+  description = "Name of the HTTP API"
+  type        = string
+}
+
+variable "api_routes" {
+    description = "List of API routes and their configurations"
+    type = map(object({
+        route_key     = string
+        method        = string
+        uri           = string
+        description   = string
+    }))
 }

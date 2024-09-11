@@ -28,11 +28,6 @@ variable "ssh_keys" {
   type        = map(string)
 }
 
-variable "ec2-s3_role_name" {
-  description = "The name of the role to associate with the EC2 instance"
-  type        = string
-}
-
 variable "ec2-s3_iam_instance_profile_name" {
   description = "The name of the IAM instance profile to associate with the EC2 instance"
   type        = string

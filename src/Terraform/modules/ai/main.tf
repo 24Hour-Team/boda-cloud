@@ -1,8 +1,3 @@
-# resource "aws_iam_instance_profile" "boda_ec2-s3_instance_profile" {
-#   name = var.ec2-s3_iam_instance_profile_name
-#   role = var.ec2-s3_role_name
-# }
-
 resource "aws_security_group" "ai" {
   vpc_id = var.vpc_id
 
@@ -10,14 +5,6 @@ resource "aws_security_group" "ai" {
     description = "SSH"
     from_port = 22
     to_port = 22
-    protocol = "tcp"
-    cidr_blocks = ["${var.private_ips["back"]}/32"]
-  }
-
-  ingress {
-    description = "HTTPS"
-    from_port = 443
-    to_port = 443
     protocol = "tcp"
     cidr_blocks = ["${var.private_ips["back"]}/32"]
   }

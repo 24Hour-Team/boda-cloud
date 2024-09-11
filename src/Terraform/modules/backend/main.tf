@@ -10,6 +10,14 @@ resource "aws_security_group" "back" {
   }
 
   ingress {
+    description = "HTTP"
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["${var.private_ips["bastion"]}/32"]
+  }
+
+  ingress {
     description = "HTTPS"
     from_port = 443
     to_port = 443
@@ -36,6 +44,7 @@ resource "aws_instance" "backend" {
   subnet_id     = var.private_subnet_ids[var.instance_indexes["back"] - 1]
   vpc_security_group_ids = [aws_security_group.back.id]
   private_ip = var.private_ips["back"]
+  iam_instance_profile = var.ec2-s3_iam_instance_profile_name
   
   tags = {
     Name = "BODA Backend"

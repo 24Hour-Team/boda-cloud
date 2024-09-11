@@ -44,14 +44,15 @@ module "boda-back" {
   instance_indexes = var.instance_indexes
   ami_id = module.ami.amazon_linux_id
   ssh_keys = var.ssh_keys
+
+  ec2-s3_iam_instance_profile_name = var.ec2-s3_iam_instance_profile_name
 }
 
 module "boda-ai" {
   source = "./modules/ai"
   
   ec2-s3_iam_instance_profile_name = var.ec2-s3_iam_instance_profile_name
-  ec2-s3_role_name = var.ec2-s3_role_name
-  
+
   vpc_id = module.boda-network.vpc_id
   private_subnet_ids = module.boda-network.private_subnet_ids
   private_ips = var.private_ips
@@ -82,30 +83,53 @@ module "boda-db" {
   db_password = var.db_password
 }
 
-
-module "boda-api_gateway" {
-  source ="./modules/api_gateway"
-
-  rest_api_name = "boda-api"
-  stage_name = "prod"
-  vpc_link_id = module.boda-vpc_link.vpc_link_id
-}
-
 module "boda-load_balancer" {
-  source = "./modules/load_balancer"
+  source = "./modules/alb"
 
   vpc_id = module.boda-network.vpc_id
   subnet_ids = module.boda-network.public_subnet_ids
-
-  # route53_zone_id = var.route53_zone_id
   domain_name = var.domain_name
-  # target_group_arn = var.target_group_arn
-  
+  anywhere_ip = var.anywhere_ip
+  backend_id = module.boda-back.instance_id
+
+  depends_on = [ module.boda-network ]
 }
 
-module "boda-vpc_link" {
-  source = "./modules/vpc_link"
+module "boda-api_gateway" {
+  source = "./modules/http_api"
 
-  load_balancer_arn = module.boda-load_balancer.boda_load_balancer_arn
-  
+  api_name = var.api_name
+  api_routes = var.api_routes
+  subnet_id = module.boda-network.private_subnet_ids[0]
+  security_group_id = module.boda-load_balancer.load_balancer_security_group_id
+  backend_arn = module.boda-load_balancer.load_balancer_listener_arn
+
+  depends_on = [ module.boda-load_balancer ]
 }
+
+# module "boda-api_gateway" {
+#   source ="./modules/api_gateway"
+
+#   rest_api_name = "boda-api"
+#   stage_name = "prod"
+#   vpc_link_id = module.boda-vpc_link.vpc_link_id
+# }
+
+# module "boda-load_balancer" {
+#   source = "./modules/load_balancer"
+
+#   vpc_id = module.boda-network.vpc_id
+#   subnet_ids = module.boda-network.public_subnet_ids
+
+#   # route53_zone_id = var.route53_zone_id
+#   domain_name = var.domain_name
+#   # target_group_arn = var.target_group_arn
+  
+# }
+
+# module "boda-vpc_link" {
+#   source = "./modules/vpc_link"
+
+#   load_balancer_arn = module.boda-load_balancer.boda_load_balancer_arn
+  
+# }

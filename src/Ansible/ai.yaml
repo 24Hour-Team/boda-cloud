@@ -1,67 +1,68 @@
 - hosts: ai
   become_method: sudo
   tasks:
-  # - name: Install Docker
-  #   dnf:
-  #     name: docker
-  #     state: latest
-
-  # - name: Start Docker
-  #   shell: |
-  #     systemctl start docker
-  #     systemctl enable docker
-
-  # - name: Install docker-compose
-  #   shell: |
-  #     curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-  #     chmod +x /usr/local/bin/docker-compose
-
-  # - name: Change Docker group
-  #   shell: |
-  #     sudo usermod -aG docker $USER
-  #     sudo systemctl restart docker
-  #     newgrp docker
-
-  # - name: Download AI Model
-  #   shell: aws s3 cp {{ s3_bucket }}/boda-ai/docker-compose.yaml .
-
-  # - name: Start Docker Compose
-  #   docker_compose:
-  #     project_src: aida0/boda-ai:latest
-  #     state: present
-      
-
-  - name: Copy requirements installation file
-    synchronize:
-      src: "{{ repo_dir }}/Ansible/"
-      dest: "{{ home_dir }}/requirements/"
-      delete: yes
-      archive: yes
-      compress: yes
-      use_ssh_args: yes
-      rsync_opts:
-        - "--include=*requirements*"
-        - "--exclude=*"
-
-  - name: Install environments
+  - name: Install environment
     dnf:
       name:
-        - git
+        - docker
         - pip
       state: latest
 
-  - name: Install pyyaml
-    pip:
-      name: pyyaml
-      state: latest
+  - name: Start Docker
+    shell: |
+      systemctl start docker
+      systemctl enable docker
+
+  - name: Install docker-compose
+    shell: |
+      curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+      chmod +x /usr/local/bin/docker-compose
+
+  - name: Change Docker group
+    shell: |
+      newgrp docker
+      sudo usermod -aG docker $USER
+      sudo systemctl restart docker
 
   - name: Download AI Model
-    shell: aws s3 cp {{ s3_bucket }}/boda-ai/ {{ home_dir }}/boda-ai/ --recursive
+    shell: aws s3 cp {{ s3_bucket }}/boda-ai/docker-compose.yaml .
+
+  - name: Start Docker Compose
+    shell: docker-compose up
+    async: 120
+    poll: 0
       
-  - name: Install python dependencies
-    shell: python3 parse_requirements.py requirements.yaml | xargs /usr/bin/pip install
-    args:
-      chdir: "{{ home_dir }}/requirements"
+  # - name: Copy requirements installation file
+  #   synchronize:
+  #     src: "{{ repo_dir }}/Ansible/"
+  #     dest: "{{ home_dir }}/requirements/"
+  #     delete: yes
+  #     archive: yes
+  #     compress: yes
+  #     use_ssh_args: yes
+  #     rsync_opts:
+  #       - "--include=*requirements*"
+  #       - "--exclude=*"
+
+  # - name: Install environments
+  #   dnf:
+  #     name:
+  #       - git
+  #       - pip
+  #     state: latest
+
+  # - name: Install pyyaml
+  #   pip:
+  #     name: pyyaml
+  #     state: latest
+
+  # - name: Download AI Model
+  #   shell: aws s3 cp {{ s3_bucket }}/boda-ai/ {{ home_dir }}/boda-ai/ --recursive
+      
+  # - name: Install python dependencies
+  #   shell: python3 parse_requirements.py requirements.yaml | xargs /usr/bin/pip install
+  #   args:
+  #     chdir: "{{ home_dir }}/requirements"
 
   # - name: Run BODA model
   #   shell: python3 main.py

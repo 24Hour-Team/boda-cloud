@@ -42,3 +42,8 @@ variable "anywhere_ip" {
   description = "IP address for anywhere"
   type        = string
 }
+
+variable "ec2-s3_iam_instance_profile_name" {
+  description = "The name of the IAM instance profile to associate with the EC2 instance"
+  type        = string
+}

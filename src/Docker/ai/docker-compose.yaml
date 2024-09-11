@@ -1,0 +1,7 @@
+services:
+  web:
+    image: aida0/boda-ai
+    ports:
+      - target: 5000
+        published: 5000
+        protocol: tcp

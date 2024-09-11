@@ -1,0 +1,13 @@
+FROM python:3.9
+
+WORKDIR /boda-ai
+
+COPY *requirement* .
+
+RUN pip install pyyaml
+
+COPY . .
+
+RUN python3 parse_requirements.py requirements.yaml | xargs pip install
+
+CMD ["python3", "main.py"]

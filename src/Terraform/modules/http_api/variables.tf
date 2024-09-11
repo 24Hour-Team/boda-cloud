@@ -3,8 +3,8 @@ variable "api_name" {
   type        = string
 }
 
-variable "backend_url" {
-  description = "URL of the backend service"
+variable "backend_arn" {
+  description = "ARN of the backend service"
   type        = string
 }
 
@@ -13,15 +13,17 @@ variable "security_group_id" {
   type        = string
 }
 
-variable "subnet_ids" {
+variable "subnet_id" {
   description = "List of subnet IDs for VPC Link"
-  type        = list(string)
+  type        = string
 }
 
-variable "routes" {
-  description = "Map of routes to create"
-  type = map(object({
-    method = string
-    path   = string
-  }))
+variable "api_routes" {
+    description = "List of API routes and their configurations"
+    type = map(object({
+        route_key     = string
+        method        = string
+        uri           = string
+        description   = string
+    }))
 }
